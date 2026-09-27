@@ -695,7 +695,15 @@ description: <when to trigger: JD shared, "tailor/review/improve my CV", "add th
 
 ---
 
-## 12. Decisions needed from you before the build
+## 12. Decisions
+
+### Confirmed (2026-09-27)
+- **Data location:** Option A. The source of truth is `profile/` in the JobOS repo, copied into the skill's `candidate/` folder.
+- **Length:** 1 page for every archetype.
+- **Regional header:** no photo, no nationality. Each location gets its own **phone number** and **visa / work-authorisation line**, both stored in `profile/fact-sheet.md`.
+- **Spelling:** British English.
+
+### Still open
 
 1. **Data location:** Option A (JobOS `profile/` as source of truth, synced into the skill) or Option B (inside the skill only)?
 2. **Seed material:** can you provide the Master CV and the "Master Work Experience Log" workbook? The first build step is converting them into the evidence bank, with a short Q&A from me to fill in `my_role`, `ownership_level` and metric provenance.
