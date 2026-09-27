@@ -1,0 +1,1418 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CV Studio</title>
+<style>
+:root{
+  --bg:#f6f5f2; --surface:#ffffff; --surface-2:#faf9f7; --ink:#1d1d1f; --ink-2:#55555c; --ink-3:#8a8a91;
+  --line:#e4e2dd; --accent:#1f4e79; --accent-ink:#ffffff; --accent-soft:#e8eef5;
+  --ok:#1e7a4c; --ok-soft:#e6f4ec; --warn:#9a5b00; --warn-soft:#fdf3e1; --bad:#a3262a; --bad-soft:#fbeaea;
+  --radius:10px; --shadow:0 1px 2px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.05);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+a{color:var(--accent)}
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.top-inner{max-width:1200px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{font-weight:700;font-size:17px;letter-spacing:-.01em}
+.brand small{display:block;font-weight:400;font-size:12px;color:var(--ink-3)}
+nav.tabs{display:flex;gap:4px;flex-wrap:wrap}
+nav.tabs button{background:none;border:0;padding:8px 12px;border-radius:8px;font:inherit;color:var(--ink-2);cursor:pointer}
+nav.tabs button:hover{background:var(--surface-2);color:var(--ink)}
+nav.tabs button.active{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.mode-pill{margin-left:auto;font-size:12px;padding:4px 10px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);color:var(--ink-2);cursor:pointer}
+main{max-width:1200px;margin:0 auto;padding:20px 16px 80px}
+section.tab{display:none}
+section.tab.active{display:block}
+h1.page{font-size:24px;margin:4px 0 4px;letter-spacing:-.02em}
+p.lede{color:var(--ink-2);margin:0 0 18px;max-width:760px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:16px}
+.card h2{font-size:17px;margin:0 0 4px}
+.card .hint{color:var(--ink-2);font-size:13.5px;margin:0 0 12px}
+details.card>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px}
+details.card>summary::-webkit-details-marker{display:none}
+details.card>summary h2{margin:0}
+details.card>summary::after{content:"▸";margin-left:auto;color:var(--ink-3);transition:transform .15s}
+details.card[open]>summary::after{transform:rotate(90deg)}
+details.card[open]>summary{margin-bottom:12px}
+.step-no{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-size:13px;font-weight:700;flex:none}
+.step-no.done{background:var(--ok-soft);color:var(--ok)}
+label{display:block;font-size:13px;font-weight:600;color:var(--ink-2);margin:10px 0 4px}
+label .opt{font-weight:400;color:var(--ink-3)}
+input[type=text],input[type=email],input[type=url],input[type=password],input[type=number],select,textarea{
+  width:100%;font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+textarea{min-height:90px;resize:vertical;line-height:1.45}
+textarea.tall{min-height:220px}
+textarea.mono,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:0 16px}
+@media (max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
+.btn{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:14px;font-weight:600;padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;text-decoration:none}
+.btn:hover{background:var(--surface-2)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.small{font-size:12.5px;padding:5px 10px}
+.btn.ghost{border-color:transparent;background:none;color:var(--ink-2)}
+.btn.danger{color:var(--bad)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row.end{justify-content:flex-end}
+.spacer{flex:1}
+.muted{color:var(--ink-3);font-size:13px}
+.note{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13.5px;color:var(--ink-2)}
+.note.warn{background:var(--warn-soft);border-color:#f0dcb4;color:#5e3a00}
+.note.ok{background:var(--ok-soft);border-color:#bfe3cf;color:#154d31}
+.note.bad{background:var(--bad-soft);border-color:#f1c4c5;color:#6d1518}
+.checks{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 16px}
+.check{display:flex;align-items:center;gap:6px;font-size:13px;padding:5px 10px;border-radius:999px;background:var(--surface);border:1px solid var(--line);color:var(--ink-2)}
+.check.done{background:var(--ok-soft);border-color:#bfe3cf;color:var(--ok)}
+table.edit{width:100%;border-collapse:collapse;font-size:14px}
+table.edit th{text-align:left;font-size:12px;font-weight:600;color:var(--ink-3);padding:4px 6px}
+table.edit td{padding:3px 4px;vertical-align:top}
+table.edit td:last-child{width:1%}
+@media (max-width:760px){table.edit,table.edit tbody,table.edit tr,table.edit td{display:block;width:100%}table.edit thead{display:none}table.edit tr{border-bottom:1px solid var(--line);padding:6px 0}}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:13px;cursor:pointer;background:#fff}
+.chip input{margin:0}
+.ev{border:1px solid var(--line);border-radius:8px;margin-bottom:8px;background:#fff}
+.ev>summary{padding:10px 12px;cursor:pointer;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ev>summary .id{font-family:ui-monospace,monospace;font-size:12px;color:var(--ink-3)}
+.ev>summary .own{font-size:11.5px;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.ev>summary .own.unclear{background:var(--warn-soft);color:var(--warn)}
+.ev .body{padding:0 12px 12px}
+.pill-tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-bottom:14px}
+.pill-tabs button{background:none;border:0;border-bottom:2px solid transparent;padding:8px 12px;font:inherit;font-size:14px;color:var(--ink-2);cursor:pointer}
+.pill-tabs button.active{border-bottom-color:var(--accent);color:var(--accent);font-weight:600}
+.pill-tabs .count{font-size:11px;background:var(--warn-soft);color:var(--warn);border-radius:999px;padding:1px 6px;margin-left:4px}
+.pane{display:none}.pane.active{display:block}
+.md h1,.md h2,.md h3{margin:14px 0 6px;line-height:1.25}
+.md h1{font-size:19px}.md h2{font-size:17px}.md h3{font-size:15px}
+.md p{margin:6px 0}.md ul,.md ol{margin:6px 0;padding-left:22px}.md li{margin:3px 0}
+.stream{white-space:pre-wrap;font-family:ui-monospace,monospace;font-size:12px;max-height:260px;overflow:auto;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:10px;color:var(--ink-2)}
+.working{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink-2)}
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid var(--accent-soft);border-top-color:var(--accent);animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.studio{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:16px;align-items:start}
+@media (max-width:1000px){.studio{grid-template-columns:1fr}}
+.preview-wrap{background:#e9e7e2;border-radius:var(--radius);padding:16px;overflow:auto;max-height:calc(100vh - 120px);position:sticky;top:70px}
+.fit{font-size:12.5px;font-weight:600;padding:4px 10px;border-radius:999px;display:inline-block}
+.fit.ok{background:var(--ok-soft);color:var(--ok)}.fit.over{background:var(--bad-soft);color:var(--bad)}
+.qc-list{margin:8px 0 0;padding-left:18px;font-size:13.5px}
+.qc-list li{margin:2px 0}
+.hist-item{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.hist-item:last-child{border-bottom:0}
+.hist-item .t{font-weight:600}
+dialog{border:0;border-radius:14px;padding:0;max-width:760px;width:calc(100% - 32px);box-shadow:0 20px 60px rgba(0,0,0,.25)}
+dialog::backdrop{background:rgba(20,20,25,.45)}
+.dlg-body{padding:20px}
+.dlg-body h2{margin:0 0 6px;font-size:19px}
+.steps{counter-reset:s;list-style:none;padding:0;margin:12px 0}
+.steps>li{counter-increment:s;position:relative;padding-left:34px;margin-bottom:14px}
+.steps>li::before{content:counter(s);position:absolute;left:0;top:0;width:24px;height:24px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:13px;display:grid;place-items:center}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:10px 16px;border-radius:8px;font-size:14px;z-index:100;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.show{opacity:1}
+
+/* ---------- CV page ---------- */
+#cvPage{--cv-font:Calibri,Carlito,"Segoe UI",Arial,sans-serif;
+  width:210mm;min-height:297mm;background:#fff;color:#111;margin:0 auto;padding:13mm 15mm 12mm;
+  font-family:var(--cv-font);font-size:10.3pt;line-height:1.28;box-shadow:0 2px 12px rgba(0,0,0,.15);position:relative}
+#cvPage.serif{--cv-font:Georgia,"Times New Roman",Times,serif;font-size:10pt}
+#cvPage .cv-name{font-size:19pt;font-weight:700;text-align:center;margin:0 0 2pt;letter-spacing:.02em}
+#cvPage .cv-contact{text-align:center;font-size:9.4pt;margin:0;color:#222}
+#cvPage .cv-sec{font-size:10.4pt;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border-bottom:.8pt solid #111;margin:9pt 0 4pt;padding-bottom:1pt}
+#cvPage .cv-row{display:flex;justify-content:space-between;gap:12pt;margin:4pt 0 0}
+#cvPage .cv-row.h3{font-weight:700;margin-top:6pt}
+#cvPage .cv-row .r{white-space:nowrap;text-align:right}
+#cvPage .cv-row.sub{margin-top:0;font-style:italic}
+#cvPage .cv-row.sub strong{font-style:italic}
+#cvPage ul{margin:2pt 0 0;padding-left:13pt}
+#cvPage li{margin:1.2pt 0;padding-left:1pt}
+#cvPage p{margin:3pt 0}
+#cvPage .page-line{position:absolute;left:0;right:0;border-top:1.5px dashed #d33;pointer-events:none}
+#cvPage .page-line span{position:absolute;right:4px;top:-18px;font:11px system-ui;color:#d33;background:#fff;padding:0 4px}
+@page{size:A4;margin:0}
+@media print{
+  body.print-cv{background:#fff}
+  body.print-cv > *:not(#printRoot){display:none !important}
+  body.print-cv #printRoot{display:block}
+  #printRoot #cvPage{box-shadow:none;margin:0;min-height:0}
+}
+#printRoot{display:none}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">CV Studio<small>Tailored, truthful CVs, one role at a time</small></div>
+    <nav class="tabs" id="tabs">
+      <button data-tab="start" class="active">Start</button>
+      <button data-tab="profile">1 · My profile</button>
+      <button data-tab="tailor">2 · Tailor a CV</button>
+      <button data-tab="review">Review a CV</button>
+      <button data-tab="history">History</button>
+      <button data-tab="settings">Settings</button>
+    </nav>
+    <button class="mode-pill" id="modePill" title="Change in Settings">Copy-paste mode</button>
+  </div>
+</header>
+
+<main>
+<!-- ======================= START ======================= -->
+<section class="tab active" id="tab-start">
+  <h1 class="page">Welcome to CV Studio</h1>
+  <p class="lede">CV Studio turns your real experience into a CV tailored to one specific job, without inventing anything. Your data stays in this browser on this computer.</p>
+  <div class="card">
+    <h2>How it works</h2>
+    <ol class="steps">
+      <li><strong>Build your profile once.</strong> Paste your current CV. Claude turns it into an "evidence bank": one entry per project or achievement, with what you actually did and which numbers are exact. You check it and answer a few questions.</li>
+      <li><strong>Tailor for each job.</strong> Paste a job description. Claude decides how to position you, picks your strongest relevant evidence and writes the CV. You also get the reasoning, the gaps and questions for you.</li>
+      <li><strong>Edit, check and save.</strong> Adjust the text, watch the one-page indicator and automatic checks, then print to PDF or download a Word file.</li>
+    </ol>
+    <div class="row"><button class="btn primary" data-go="profile">Start with my profile →</button></div>
+  </div>
+  <div class="card">
+    <h2>Two ways to use Claude</h2>
+    <div class="grid2">
+      <div>
+        <h3 style="margin:.4em 0 .2em;font-size:15px">Copy-paste (default, no setup)</h3>
+        <p class="muted" style="margin:0">CV Studio prepares the full instructions. You copy them into your own Claude chat at claude.ai, then paste Claude's answer back here. Works with a normal Claude plan.</p>
+      </div>
+      <div>
+        <h3 style="margin:.4em 0 .2em;font-size:15px">API key (optional, fully automatic)</h3>
+        <p class="muted" style="margin:0">Add an Anthropic API key in Settings and everything happens inside this page. Usage is billed to your API account. It can also read a job posting from a link.</p>
+      </div>
+    </div>
+  </div>
+  <div class="card" id="startStatus"></div>
+</section>
+
+<!-- ======================= PROFILE ======================= -->
+<section class="tab" id="tab-profile">
+  <h1 class="page">My profile</h1>
+  <p class="lede">Everything CV Studio knows about you. The <strong>evidence bank</strong> is the only source Claude may use for facts, so the more accurate it is, the better every CV will be.</p>
+  <div class="checks" id="profileChecks"></div>
+
+  <details class="card" open id="secSources">
+    <summary><span class="step-no" data-step="sources">1</span><h2>Your existing CV and notes</h2></summary>
+    <p class="hint">Paste your current CV (any version is fine) or upload a file. Add anything the CV leaves out: project details, results, numbers, feedback you received.</p>
+    <div class="row" style="margin-bottom:6px">
+      <label class="btn small" style="margin:0">Upload file (.docx, .pdf, .txt)<input type="file" id="fileCv" accept=".txt,.md,.docx,.pdf" hidden></label>
+      <span class="muted" id="fileStatus"></span>
+    </div>
+    <label for="srcCv">Current CV text</label>
+    <textarea id="srcCv" class="tall" data-bind="profile.sources.cv" placeholder="Paste the full text of your CV here…"></textarea>
+    <label for="srcNotes">Extra project notes <span class="opt">(optional but valuable)</span></label>
+    <textarea id="srcNotes" data-bind="profile.sources.notes" placeholder="E.g. 'Fertility market report, Mar–May 2025: I built the whole model myself, ran 8 expert interviews, the client used it for their entry decision…'"></textarea>
+  </details>
+
+  <details class="card" open id="secBank">
+    <summary><span class="step-no" data-step="bank">2</span><h2>Evidence bank</h2></summary>
+    <p class="hint">Claude reads your CV and notes and creates one entry per project or achievement. Check each entry, especially <em>what I personally did</em>, <em>ownership</em> and the <em>numbers</em>. These stop the CV from overstating your role.</p>
+    <div class="row">
+      <button class="btn primary" id="btnBuildBank">Build my profile from my CV</button>
+      <button class="btn" id="btnAddEntry">+ Add entry manually</button>
+      <span class="spacer"></span>
+      <span class="muted" id="bankCount"></span>
+    </div>
+    <div id="bankQuestionsBox" style="margin-top:14px"></div>
+    <div id="bankList" style="margin-top:14px"></div>
+  </details>
+
+  <details class="card" id="secFacts">
+    <summary><span class="step-no" data-step="facts">3</span><h2>Basic facts (never rewritten)</h2></summary>
+    <p class="hint">Names, titles, dates and education are locked: the CV must match them exactly. "Build my profile" fills these in. Please check them.</p>
+    <div class="grid2">
+      <div><label>Full name</label><input type="text" data-bind="profile.facts.name"></div>
+      <div><label>Email</label><input type="email" data-bind="profile.facts.email"></div>
+      <div><label>LinkedIn <span class="opt">(optional)</span></label><input type="text" data-bind="profile.facts.linkedin"></div>
+      <div><label>Website <span class="opt">(optional)</span></label><input type="text" data-bind="profile.facts.website"></div>
+    </div>
+    <label style="margin-top:16px">Locations you apply to</label>
+    <p class="muted" style="margin:0 0 6px">The CV header uses the phone number and visa line for the job's location.</p>
+    <div id="locTable"></div>
+    <label style="margin-top:16px">Employment <span class="opt">(exact titles and dates)</span></label>
+    <div id="empTable"></div>
+    <label style="margin-top:16px">Education</label>
+    <div id="eduTable"></div>
+    <div class="grid2">
+      <div><label>Certifications <span class="opt">(optional)</span></label><input type="text" data-bind="profile.facts.certifications"></div>
+      <div><label>Languages <span class="opt">(with level)</span></label><input type="text" data-bind="profile.facts.languages"></div>
+    </div>
+  </details>
+
+  <details class="card" id="secSettings">
+    <summary><span class="step-no" data-step="settings">4</span><h2>Preferences</h2></summary>
+    <div class="grid3">
+      <div><label>Career stage</label>
+        <select data-bind="profile.settings.seniority">
+          <option value="student">Student / graduate</option>
+          <option value="early">Early career (0–3 years)</option>
+          <option value="mid">Mid career (3–8 years)</option>
+          <option value="senior">Senior (8–15 years)</option>
+          <option value="executive">Executive (15+ years)</option>
+        </select></div>
+      <div><label>CV length</label>
+        <select data-bind="profile.settings.pageLength" data-type="number">
+          <option value="1">1 page</option><option value="2">2 pages</option>
+        </select></div>
+      <div><label>Spelling</label>
+        <select data-bind="profile.settings.spelling">
+          <option value="british">British English</option><option value="american">American English</option>
+        </select></div>
+      <div><label>Your AI experience</label>
+        <select data-bind="profile.settings.aiLevel">
+          <option value="none">None to mention</option>
+          <option value="uses">I use AI tools in my work</option>
+          <option value="builds">I build AI workflows / tools</option>
+          <option value="advises">I advise or lead AI implementation</option>
+        </select></div>
+      <div><label>CV font</label>
+        <select data-bind="profile.settings.cvFont">
+          <option value="sans">Modern (Calibri / Arial)</option>
+          <option value="serif">Classic (Georgia / Times)</option>
+        </select></div>
+    </div>
+    <label style="margin-top:14px">Role types you target <span class="opt">(order doesn't matter)</span></label>
+    <div class="chips" id="roleChips"></div>
+  </details>
+
+  <details class="card" id="secVoice">
+    <summary><span class="step-no" data-step="voice">5</span><h2>Your writing voice</h2></summary>
+    <p class="hint">Short answers are fine. Real bullets you like are the most useful thing here.</p>
+    <div class="grid2">
+      <div><label>Words or phrases you dislike</label><textarea data-bind="profile.voice.dislike" placeholder="e.g. spearheaded, passionate, synergy"></textarea></div>
+      <div><label>Words or verbs you like</label><textarea data-bind="profile.voice.like" placeholder="e.g. built, ran, sized, advised"></textarea></div>
+    </div>
+    <label>2–3 bullets you've written that feel right</label>
+    <textarea data-bind="profile.voice.goodBullets"></textarea>
+    <label>Bullets that feel wrong, and why <span class="opt">(optional)</span></label>
+    <textarea data-bind="profile.voice.badBullets"></textarea>
+    <div class="grid2">
+      <div><label>Tone <span class="opt">(optional)</span></label><input type="text" data-bind="profile.voice.tone" placeholder="e.g. plain and direct, understated, numbers-heavy"></div>
+      <div><label>Never claim or mention <span class="opt">(optional)</span></label><input type="text" data-bind="profile.voice.boundaries" placeholder="e.g. never say I managed a team"></div>
+    </div>
+    <label>How clients may be described <span class="opt">(confidentiality)</span></label>
+    <textarea data-bind="profile.voice.confidentiality" placeholder="e.g. Never name clients. Use descriptors like 'a Hong Kong healthcare investor'."></textarea>
+  </details>
+
+  <details class="card" id="secFeedback">
+    <summary><span class="step-no done">✓</span><h2>Lessons from your edits</h2></summary>
+    <p class="hint">When you edit a generated CV, you can save what you changed and why. These lessons are sent with every future request, so the next CV needs fewer fixes.</p>
+    <div id="feedbackList"></div>
+  </details>
+</section>
+
+<!-- ======================= TAILOR ======================= -->
+<section class="tab" id="tab-tailor">
+  <h1 class="page">Tailor a CV</h1>
+  <p class="lede">Paste the job description. CV Studio will position you for this role using only your evidence bank.</p>
+  <div id="tailorGuard"></div>
+  <div class="card" id="jobCard">
+    <div class="grid3">
+      <div><label>Company</label><input type="text" id="jCompany"></div>
+      <div><label>Role title</label><input type="text" id="jRole"></div>
+      <div><label>Location <span class="opt">(sets CV header)</span></label><select id="jLocation"></select></div>
+    </div>
+    <div class="grid2">
+      <div><label>How you're applying <span class="opt">(optional)</span></label>
+        <select id="jChannel">
+          <option value="">Not specified</option>
+          <option value="portal">Online portal / ATS</option>
+          <option value="referral">Referral</option>
+          <option value="direct">Direct to hiring manager</option>
+          <option value="recruiter">Via recruiter / headhunter</option>
+        </select></div>
+      <div><label>Job posting link <span class="opt">(optional)</span></label>
+        <div class="row" style="flex-wrap:nowrap"><input type="url" id="jUrl" placeholder="https://…"><button class="btn small" id="btnFetchJd" title="Requires an API key">Read link</button></div></div>
+    </div>
+    <label>Job description</label>
+    <textarea id="jJd" class="tall" placeholder="Paste the full job description here…"></textarea>
+    <label>Anything Claude should know? <span class="opt">(optional)</span></label>
+    <input type="text" id="jSteer" placeholder="e.g. lean on my PE-facing work; don't mention the toys project">
+    <div class="row end" style="margin-top:14px">
+      <button class="btn ghost" id="btnClearJob">Clear</button>
+      <button class="btn primary" id="btnTailor">Create tailored CV</button>
+    </div>
+  </div>
+  <div id="tailorWorking"></div>
+  <div id="resultArea" hidden>
+    <div class="card">
+      <div class="row">
+        <h2 style="margin:0" id="resTitle">Result</h2><span class="spacer"></span>
+        <select id="versionSel" class="btn small" style="width:auto"></select>
+      </div>
+      <div class="pill-tabs" id="resTabs" style="margin-top:12px">
+        <button data-pane="brief" class="active">Positioning</button>
+        <button data-pane="cv">CV</button>
+        <button data-pane="decisions">Decisions</button>
+        <button data-pane="gaps">Gaps & risks</button>
+        <button data-pane="questions">Questions for you</button>
+        <button data-pane="changes">Evidence used</button>
+      </div>
+      <div class="pane active md" data-pane="brief" id="paneBrief"></div>
+      <div class="pane md" data-pane="decisions" id="paneDecisions"></div>
+      <div class="pane md" data-pane="gaps" id="paneGaps"></div>
+      <div class="pane md" data-pane="questions" id="paneQuestions"></div>
+      <div class="pane md" data-pane="changes" id="paneChanges"></div>
+      <div class="pane" data-pane="cv">
+        <div class="studio">
+          <div>
+            <div class="row" style="margin-bottom:6px">
+              <strong style="font-size:14px">Edit the CV</strong><span class="spacer"></span>
+              <span id="fitBadge" class="fit ok"></span>
+            </div>
+            <textarea id="cvEditor" class="mono" style="min-height:420px"></textarea>
+            <p class="muted" style="margin:4px 0 0">Format: <code>## SECTION</code>, <code>### Employer | Location</code>, <code>**Title** | Dates</code>, <code>- bullet</code>. The header comes from your profile.</p>
+            <div class="note" style="margin-top:12px" id="qcBox"></div>
+            <div class="row" style="margin-top:12px">
+              <button class="btn primary" id="btnPrint">Print / Save as PDF</button>
+              <button class="btn" id="btnWord">Download Word</button>
+              <button class="btn" id="btnMd">Download text</button>
+            </div>
+            <div class="card" style="margin-top:16px;box-shadow:none">
+              <h2 style="font-size:15px">Ask for changes</h2>
+              <p class="hint">E.g. "shorten to fit one page", "lead with the diligence work", or answers to the questions in the Questions tab.</p>
+              <textarea id="refineReq"></textarea>
+              <div class="row end" style="margin-top:8px"><button class="btn primary" id="btnRefine">Revise CV</button></div>
+            </div>
+            <div class="card" style="margin-top:0;box-shadow:none">
+              <h2 style="font-size:15px">Teach CV Studio</h2>
+              <p class="hint">Edited something? Say what and why, and it becomes a lesson for future CVs.</p>
+              <textarea id="lessonText" placeholder="e.g. I replaced 'orchestrated' with 'ran': I prefer plain verbs."></textarea>
+              <div class="row end" style="margin-top:8px"><button class="btn" id="btnLesson">Save lesson</button></div>
+            </div>
+          </div>
+          <div class="preview-wrap" id="previewWrap"><div id="cvPage"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= REVIEW ======================= -->
+<section class="tab" id="tab-review">
+  <h1 class="page">Review a CV</h1>
+  <p class="lede">Get a senior-recruiter critique of any CV: yours or one CV Studio made. Add a job description to judge fit for that role.</p>
+  <div class="card">
+    <div class="row"><label style="margin:0">CV to review</label><span class="spacer"></span><button class="btn small" id="btnUseLatest">Use my latest tailored CV</button><button class="btn small" id="btnUseSource">Use my profile CV</button></div>
+    <textarea id="rCv" class="tall" style="margin-top:6px"></textarea>
+    <label>Job description <span class="opt">(optional)</span></label>
+    <textarea id="rJd"></textarea>
+    <div class="row end" style="margin-top:12px"><button class="btn primary" id="btnReview">Review</button></div>
+  </div>
+  <div id="reviewWorking"></div>
+  <div class="card md" id="reviewOut" hidden></div>
+</section>
+
+<!-- ======================= HISTORY ======================= -->
+<section class="tab" id="tab-history">
+  <h1 class="page">History</h1>
+  <p class="lede">Every tailored CV is saved here with its job description and versions.</p>
+  <div class="card" id="histList"></div>
+</section>
+
+<!-- ======================= SETTINGS ======================= -->
+<section class="tab" id="tab-settings">
+  <h1 class="page">Settings</h1>
+  <div class="card">
+    <h2>How CV Studio talks to Claude</h2>
+    <div class="chips" style="margin:10px 0">
+      <label class="chip"><input type="radio" name="mode" value="manual"> Copy-paste into my Claude chat</label>
+      <label class="chip"><input type="radio" name="mode" value="api"> Use my Anthropic API key</label>
+    </div>
+    <div id="apiBox">
+      <label>Anthropic API key</label>
+      <div class="row" style="flex-wrap:nowrap"><input type="password" id="apiKey" data-bind="config.apiKey" placeholder="sk-ant-…" autocomplete="off"><button class="btn small" id="btnTestKey">Test</button></div>
+      <p class="muted">Get a key at console.anthropic.com. It is stored only in this browser. Anyone who uses this browser profile could read it, so don't use a shared computer.</p>
+      <label>Model</label>
+      <select data-bind="config.model">
+        <option value="claude-opus-5">Claude Opus 5 (recommended: best writing and judgement)</option>
+        <option value="claude-sonnet-5">Claude Sonnet 5 (faster and cheaper)</option>
+      </select>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Your data</h2>
+    <p class="hint">Everything is saved in this browser only. Download a backup to move to another computer or browser, or to keep a safe copy.</p>
+    <div class="row">
+      <button class="btn" id="btnExport">Download backup</button>
+      <label class="btn" style="margin:0">Restore from backup<input type="file" id="fileImport" accept=".json" hidden></label>
+      <span class="spacer"></span>
+      <button class="btn danger" id="btnReset">Delete all data</button>
+    </div>
+  </div>
+  <div class="card">
+    <h2>About</h2>
+    <p class="muted" style="margin:0">CV Studio is part of JobOS. It works from one rule: every claim in the CV must trace to your own evidence. It can reframe and sharpen what you did, but never invents metrics, responsibilities, clients, skills or seniority.</p>
+  </div>
+</section>
+</main>
+
+<!-- Copy-paste dialog -->
+<dialog id="manualDlg">
+  <div class="dlg-body">
+    <h2 id="mTitle">Run this in Claude</h2>
+    <ol class="steps">
+      <li><strong>Copy the instructions.</strong> They include your profile and the task.<br>
+        <div class="row" style="margin-top:6px"><button class="btn primary small" id="mCopy">Copy instructions</button><a class="btn small" href="https://claude.ai/new" target="_blank" rel="noopener">Open Claude ↗</a><span class="muted" id="mSize"></span></div></li>
+      <li><strong>Paste them into a new Claude chat</strong> and send. <span id="mExtra"></span></li>
+      <li><strong>Copy Claude's whole reply</strong> (use the copy button under the reply) and paste it here:
+        <textarea id="mReply" style="margin-top:6px" placeholder="Paste Claude's full reply…"></textarea></li>
+    </ol>
+    <details><summary class="muted" style="cursor:pointer">Show the instructions</summary><textarea id="mPrompt" class="mono" readonly style="min-height:200px;margin-top:6px"></textarea></details>
+    <div class="row end" style="margin-top:14px"><button class="btn ghost" id="mCancel">Cancel</button><button class="btn primary" id="mUse">Use this answer</button></div>
+  </div>
+</dialog>
+<div class="toast" id="toast"></div>
+<div id="printRoot"></div>
+
+<script>
+"use strict";
+/* =====================================================================
+   THE METHOD: how CV Studio thinks. This is the portable "CV skill".
+   ===================================================================== */
+const METHOD = `You are CV Studio: a senior strategy recruiter, an expert CV writer and an ex-MBB recruiting lead in one. You produce the strongest truthful CV for one specific role, in the candidate's own voice, to a consulting-grade standard.
+
+# NON-NEGOTIABLES (factual integrity)
+1. Every claim must trace to the candidate's EVIDENCE BANK or FACT SHEET. If the bank is empty, only the SOURCE MATERIAL counts as evidence.
+2. Never invent metrics, outcomes, responsibilities, clients, sectors, geographies, tools, skills, qualifications or team sizes.
+3. Never upgrade ownership. The verb must match ownership_level: led → Led/Built/Ran/Owned; co-led → Co-led/Jointly built; contributed → Developed [the X part]/Delivered [component]; supported → Supported/Analysed for. If ownership is unclear, use the conservative verb and add a verification question.
+4. Titles, employers, dates and education must match the fact sheet exactly. Never change a title.
+5. Numbers: exact → as is; approximate → prefix "~" or "c." and round down; estimate → only if marked approved, stated conservatively and flagged in questions; unknown → no number, use specific scope instead. A derived number (e.g. adding up interviews across projects) is allowed only if every input is in the bank, and you must flag it.
+6. A market size or deal size is scope, not an achievement. Never imply the candidate created that value.
+7. Confidentiality: never name a client unless the bank or voice notes say it's allowed. Use the approved descriptor.
+8. Respect every "never claim" boundary and every do_not_claim item.
+9. When a fact would strengthen the CV but isn't in the evidence, don't guess. Write the strongest supported version and ask a question instead.
+10. A skill may appear only if some evidence demonstrates it, or it's in the fact sheet.
+
+Allowed (reframing): reorder and compress facts; choose which true facts to emphasise; replace vague words with more specific true ones from the bank; use an equivalent professional term (e.g. "industry report for an investor" → "market study for an investor client"); generalise for confidentiality; aggregate logged numbers (flagged); round down.
+
+# HOW TO THINK ABOUT A ROLE (do this before writing)
+1. Role read: what the role really is, its seniority, the hiring manager's actual problem, and who reads the CV first.
+2. Requirements: classify each as MUST-HAVE (screen-out), DIFFERENTIATOR (wins interviews), NICE-TO-HAVE or NOISE (boilerplate). Most JDs have 2–4 real must-haves.
+3. Evidence map: for each requirement, find evidence entries and rate them. Tiers: T1 owned outcome, quantified; T2 owned scope or scale, quantified; T3 owned outcome, qualitative but specific; T4 contribution to a team outcome; T5 activity only. Prefer higher tiers.
+4. Positioning thesis: one sentence, "For this role, [name] is a ___ who has ___, proven by ___", plus 3 proof points a recruiter must take away in a 6-second scan. It must be consistent with the candidate's real career and supportable by the bank.
+5. Gap triage for each must-have: reframable (evidence exists, surface it), transferable (adjacent evidence, bridge honestly), genuine gap (don't paper over it; flag it with a suggestion for the cover letter or interview), or deal-breaker (warn clearly).
+6. Space budget: page space follows relevance to the thesis. Give the most relevant work the most bullets; compress or cut the rest. The most relevant bullet goes first within each role.
+
+# TAILORING: the same candidate, seen through this role's lens
+Never changes: identity, employers, titles, dates, education, facts, ownership, voice.
+May change: which evidence appears, order, space, which part of a bullet comes first, vocabulary where the JD's term truthfully describes the same work, summary angle, skills order.
+Use the lightest lever: select > order > allocate space > front-load > translate term > rewrite.
+Limits: mirror the JD's terms, never its sentences (no copied phrase longer than about 4 words except proper terms like "commercial due diligence"); each JD keyword at most twice; never turn the candidate into a different professional identity (a consultant applying to PE is "a strategy consultant with investor-facing diligence experience", not "a PE professional"). Tests: a former colleague would recognise every bullet; this CV next to a version for a different role obviously shows the same person.
+
+# BULLET STANDARD
+Shape: [precise verb matching real ownership] + [specific object: what, for whom, at what scale] + [method only if it's a differentiator] + [so-what: outcome, use, decision enabled, or scale].
+- One idea per bullet. 1 line ideal, 2 lines maximum (about 15–28 words).
+- Front-load: the first 5–7 words carry the role-relevant signal.
+- Specific nouns (sector, deliverable, audience such as "investment committee", geography, scale) instead of adjectives.
+- Every bullet answers "so what?". If the bank has no outcome, use the most specific true scope. Never invent an outcome.
+- Metrics where the bank has them, in about 50–70% of bullets (100% reads as manufactured). Vary the type of metric: outcome, scale, speed, volume, audience.
+- No verb used more than twice in the CV, and consecutive bullets never start with the same verb.
+- Past tense for completed work; present tense only for ongoing work in the current role. No "I", no leading articles.
+- Use one or two outcome-led bullets per role for the strongest evidence; the rest action-led. Vary length and rhythm.
+Weak vs strong: "Responsible for market research across multiple industries" (duty, vague) becomes "Sized and mapped 9 industries, from data centres to dental, for PE and corporate clients" (specific scope, only if true). "Helped with financial modelling" becomes "Built bottom-up TAM models for 6 investor pitches" (only if the candidate led it).
+
+# NATURAL WRITING (no AI tells)
+Avoid these words unless the candidate's own voice uses them: spearheaded, orchestrated, leveraged, synergy, dynamic, passionate, results-driven, proven track record, cutting-edge, seamless, robust, holistic, pivotal, delve, tapestry, fast-paced, world-class, best-in-class, responsible for, helped, assisted, worked on, various, multiple (as filler), key (as filler), successfully, utilise.
+Avoid structural tells: every bullet the same shape; chains like ", driving X, enabling Y, resulting in Z"; triads everywhere; em-dashes (use commas); stacked abstract nouns ("strategic transformation initiatives"); every bullet ending in a percentage. Test: the candidate could say the bullet out loud to a partner without cringing.
+
+# SUMMARY
+2–3 lines: [identity through this role's lens] + [2 proof points] + [what they bring to this kind of role]. No clichés such as "results-driven professional". Built from the candidate's real narrative. Omit the summary for classic consulting and banking CVs unless it clearly helps; include it for strategy & operations, chief of staff, AI and career-switch applications.
+
+# AI EXPERIENCE
+Three levels, never blurred: uses AI tools / builds AI workflows or tools / advises on or leads AI implementation. Never claim above the candidate's stated AI level or their evidence.
+- Consulting, due diligence, PE: AI is a lever, not the headline. Show it as speed, depth or rigour; one or two mentions at most.
+- Strategy & ops, chief of staff, corporate strategy: AI as operating leverage (automated reporting, research, cadences).
+- AI roles: AI leads, with concrete tools, workflows, adoption and effect, and no hype ("harnessed the power of", "revolutionised", "AI-driven insights").
+
+# ROLE LENSES (what readers screen for)
+- Strategy consulting: structured problem solving, analytical rigour, client impact, executive communication, speed. Section order: Experience, Education, Skills. Summary usually omitted.
+- M&A / commercial due diligence: market sizing, competitive analysis, customer and expert interviews, investment questions answered, working to deal timelines. Use deal vocabulary only where true (CDD, IC, target, thesis).
+- Private equity / value creation: investor-grade analysis, operational levers, portfolio-company work, commercial judgement, modelling.
+- Strategy & operations: execution, operating cadence, cross-functional delivery, metrics and dashboards, process improvement, ownership.
+- Chief of staff: CEO leverage, ambiguity, prioritisation, stakeholder management, running the business rhythm, discretion.
+- Corporate strategy: strategic planning, market and competitor analysis, business cases, board and executive materials.
+- AI / AI implementation: real AI builds, adoption and change, measurable effect, bridging business and technical teams.
+- Product management: user problems, prioritisation, shipped outcomes, data-informed decisions.
+- Finance / investment: modelling, valuation, investment theses, diligence.
+- Other: infer what the reader screens for from the JD.
+
+# FORMAT AND ATS
+Single column; standard headings (SUMMARY, EXPERIENCE, EDUCATION, SKILLS & LANGUAGES, and optional sections such as SELECTED PROJECTS); dates as "Mar 2025 – Present"; no tables, icons or columns. Each must-have term appears at least once in context in a bullet (only where evidence supports it). Spell out an important acronym once, e.g. "commercial due diligence (CDD)". Respect the page limit strictly: for 1 page, usually 12–18 bullets in total depending on the number of roles.
+
+# QUALITY GATES (run silently before answering; fix and recheck on failure)
+H1 every bullet, number, skill and summary claim traces to evidence. H2 titles, employers, dates and education match the fact sheet. H3 verbs match ownership. H4 every number is logged, approximate numbers are marked, derived numbers are flagged. H5 no confidential names. H6 no boundary violations. H7 none of the avoided words. H8 fits the page limit. H9 ATS-safe format. H10 no must-have "covered" by an unsupported claim.
+Then read it as the likely first reader for 6 seconds: who is this person, which 3 things stick, what raises doubt? If this doesn't match the thesis, revise.`;
+
+/* =====================================================================
+   STATE & STORAGE
+   ===================================================================== */
+const STORE_KEY = "cvstudio.v1";
+const ROLE_FAMILIES = [
+  ["strategy-consulting","Strategy consulting"],["cdd","M&A / commercial due diligence"],["pe","Private equity / value creation"],
+  ["sno","Strategy & operations"],["cos","Chief of staff"],["corp-strategy","Corporate strategy"],
+  ["ai","AI / AI implementation"],["product","Product management"],["finance","Finance / investment"],["other","Other"]
+];
+const DEFAULT_BANNED = ["spearheaded","orchestrated","leveraged","leveraging","synergy","synergies","dynamic","passionate","results-driven","proven track record","cutting-edge","seamless","seamlessly","robust","holistic","pivotal","delve","tapestry","fast-paced","world-class","best-in-class","responsible for","helped","assisted","worked on","various","successfully","utilise","utilised","utilize","utilized","harnessed","revolutionised","revolutionized"];
+
+function defaults(){
+  return {
+    version:1,
+    profile:{
+      sources:{cv:"",notes:""},
+      facts:{name:"",email:"",linkedin:"",website:"",locations:[],employment:[],education:[],certifications:"",languages:""},
+      settings:{seniority:"early",pageLength:1,spelling:"british",roles:[],aiLevel:"uses",cvFont:"sans"},
+      voice:{dislike:"",like:"",goodBullets:"",badBullets:"",tone:"",boundaries:"",confidentiality:""},
+      bank:[], questions:"", feedback:[]
+    },
+    applications:[],
+    config:{mode:"manual",apiKey:"",model:"claude-opus-5"}
+  };
+}
+function mergeDeep(base, extra){
+  if (Array.isArray(base)) return Array.isArray(extra) ? extra : base;
+  if (base && typeof base === "object"){
+    const out = {...base};
+    if (extra && typeof extra === "object") for (const k of Object.keys(extra)) out[k] = (k in base) ? mergeDeep(base[k], extra[k]) : extra[k];
+    return out;
+  }
+  return extra === undefined || extra === null ? base : extra;
+}
+let state = defaults();
+try { const raw = localStorage.getItem(STORE_KEY); if (raw) state = mergeDeep(defaults(), JSON.parse(raw)); } catch(e) { console.warn("Could not load saved data", e); }
+let saveTimer = null;
+function save(){ clearTimeout(saveTimer); saveTimer = setTimeout(saveNow, 300); }
+window.addEventListener("pagehide", ()=>{ if (saveTimer) saveNow(); });
+function saveNow(){ clearTimeout(saveTimer); saveTimer = null; try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch(e){ toast("Couldn't save: browser storage is full or blocked. Download a backup in Settings."); } }
+
+function getPath(obj, path){ return path.split(".").reduce((o,k)=> o == null ? undefined : o[k], obj); }
+function setPath(obj, path, val){ const ks = path.split("."); let o = obj; for (let i=0;i<ks.length-1;i++){ if (o[ks[i]] == null) o[ks[i]] = {}; o = o[ks[i]]; } o[ks[ks.length-1]] = val; }
+
+/* =====================================================================
+   HELPERS
+   ===================================================================== */
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove("show"), 2600); }
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function today(){ return new Date().toISOString().slice(0,10); }
+function download(name, content, type){ const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([content], {type})); a.download = name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();}, 500); }
+function slug(s){ return String(s||"").replace(/[^A-Za-z0-9]+/g,"_").replace(/^_|_$/g,"") || "CV"; }
+async function copyText(text){
+  try { await navigator.clipboard.writeText(text); return true; }
+  catch(e){ const ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta); ta.select(); let ok=false; try{ ok = document.execCommand("copy"); }catch(_){} ta.remove(); return ok; }
+}
+/* Extract the LAST complete <name>…</name> block (robust to restarts mid-stream). */
+function tag(text, name){
+  const open = "<"+name+">", close = "</"+name+">";
+  let end = text.lastIndexOf(close); if (end < 0) return "";
+  let start = text.lastIndexOf(open, end); if (start < 0) return "";
+  return text.slice(start + open.length, end).trim();
+}
+function parseJsonLoose(s){
+  if (!s) return null;
+  s = s.replace(/^```(?:json)?/i,"").replace(/```$/,"").trim();
+  try { return JSON.parse(s); } catch(e){
+    const a = s.indexOf("["), o = s.indexOf("{");
+    const i = (a>=0 && (o<0 || a<o)) ? a : o; if (i<0) return null;
+    const j = Math.max(s.lastIndexOf("]"), s.lastIndexOf("}"));
+    try { return JSON.parse(s.slice(i, j+1)); } catch(_){ return null; }
+  }
+}
+function lines(v){ return String(v||"").split("\n").map(x=>x.trim()).filter(Boolean); }
+
+/* Minimal, safe markdown → HTML for reports (escapes first). */
+function inlineMd(s){
+  return esc(s).replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>").replace(/(^|[^*])\*(?!\s)(.+?)\*(?!\*)/g,"$1<em>$2</em>").replace(/`([^`]+)`/g,"<code>$1</code>");
+}
+function mdToHtml(md){
+  const out = []; let list = null;
+  const closeList = () => { if (list){ out.push("</"+list+">"); list = null; } };
+  for (const raw of String(md||"").split("\n")){
+    const l = raw.trimEnd();
+    let m;
+    if (!l.trim()){ closeList(); continue; }
+    if ((m = l.match(/^(#{1,3})\s+(.*)$/))){ closeList(); const n = m[1].length; out.push(`<h${n}>${inlineMd(m[2])}</h${n}>`); continue; }
+    if ((m = l.match(/^\s*[-*•]\s+(.*)$/))){ if (list!=="ul"){ closeList(); out.push("<ul>"); list="ul"; } out.push("<li>"+inlineMd(m[1])+"</li>"); continue; }
+    if ((m = l.match(/^\s*\d+[.)]\s+(.*)$/))){ if (list!=="ol"){ closeList(); out.push("<ol>"); list="ol"; } out.push("<li>"+inlineMd(m[1])+"</li>"); continue; }
+    closeList(); out.push("<p>"+inlineMd(l)+"</p>");
+  }
+  closeList(); return out.join("\n");
+}
+
+/* =====================================================================
+   TABS & BINDING
+   ===================================================================== */
+function showTab(name){
+  $$("#tabs button").forEach(b=>b.classList.toggle("active", b.dataset.tab===name));
+  $$("section.tab").forEach(s=>s.classList.toggle("active", s.id==="tab-"+name));
+  if (name==="tailor") renderTailorGuard();
+  if (name==="history") renderHistory();
+  if (name==="start") renderStart();
+  window.scrollTo({top:0});
+}
+$("#tabs").addEventListener("click", e=>{ const b = e.target.closest("button[data-tab]"); if (b) showTab(b.dataset.tab); });
+document.addEventListener("click", e=>{ const g = e.target.closest("[data-go]"); if (g) showTab(g.dataset.go); });
+$("#modePill").addEventListener("click", ()=>showTab("settings"));
+
+function convertIn(el){
+  const t = el.dataset.type;
+  if (t==="number") return Number(el.value)||0;
+  if (t==="lines") return lines(el.value);
+  if (t==="csv") return el.value.split(",").map(x=>x.trim()).filter(Boolean);
+  if (t==="metrics") return lines(el.value).map(l=>{ const [v,p] = l.split("|").map(x=>x.trim()); return {value:v, provenance:(p||"exact").toLowerCase()}; });
+  return el.value;
+}
+function convertOut(el, v){
+  const t = el.dataset.type;
+  if (t==="lines") return (v||[]).join("\n");
+  if (t==="csv") return (v||[]).join(", ");
+  if (t==="metrics") return (v||[]).map(m=> typeof m==="string" ? m : `${m.value} | ${m.provenance||"exact"}`).join("\n");
+  return v ?? "";
+}
+function fill(root=document){ $$("[data-bind]", root).forEach(el=>{ const v = getPath(state, el.dataset.bind); el.value = convertOut(el, v); }); }
+document.addEventListener("input", e=>{
+  const el = e.target; if (!el.dataset || !el.dataset.bind) return;
+  setPath(state, el.dataset.bind, convertIn(el)); save();
+  if (el.dataset.bind.startsWith("profile.bank.")) updateBankSummary(el);
+  if (el.dataset.bind === "profile.settings.cvFont" || el.dataset.bind === "profile.settings.pageLength") renderCv();
+  renderChecks();
+});
+document.addEventListener("change", e=>{ const el = e.target; if (el.tagName==="SELECT" && el.dataset.bind){ setPath(state, el.dataset.bind, convertIn(el)); save(); renderChecks(); if (el.dataset.bind.includes("cvFont")||el.dataset.bind.includes("pageLength")) renderCv(); if (el.dataset.bind.includes("ownership")) updateBankSummary(el); } });
+
+/* =====================================================================
+   PROFILE: tables, chips, bank
+   ===================================================================== */
+const TABLES = {
+  locTable:{path:"profile.facts.locations", cols:[["name","Location","e.g. Hong Kong"],["phone","Phone","+852 …"],["visa","Visa / work authorisation line","e.g. Hong Kong permanent resident"]], add:"+ Add location", blank:{name:"",phone:"",visa:""}},
+  empTable:{path:"profile.facts.employment", cols:[["employer","Employer",""],["title","Exact title",""],["start","Start","Mar 2024"],["end","End","Present"],["location","Location",""]], add:"+ Add job", blank:{employer:"",title:"",start:"",end:"",location:""}},
+  eduTable:{path:"profile.facts.education", cols:[["institution","Institution",""],["degree","Degree",""],["dates","Dates","2019 – 2023"],["grade","Grade / honours",""]], add:"+ Add education", blank:{institution:"",degree:"",dates:"",grade:""}}
+};
+function renderTable(id){
+  const cfg = TABLES[id], rows = getPath(state, cfg.path) || [];
+  const head = "<thead><tr>"+cfg.cols.map(c=>`<th>${esc(c[1])}</th>`).join("")+"<th></th></tr></thead>";
+  const body = rows.map((r,i)=>"<tr>"+cfg.cols.map(c=>`<td><input type="text" aria-label="${esc(c[1])}" placeholder="${esc(c[2]||c[1])}" data-bind="${cfg.path}.${i}.${c[0]}"></td>`).join("")+`<td><button class="btn ghost small danger" data-del-row="${id}" data-i="${i}" title="Remove">✕</button></td></tr>`).join("");
+  $("#"+id).innerHTML = (rows.length ? `<table class="edit">${head}<tbody>${body}</tbody></table>` : "") + `<button class="btn small" data-add-row="${id}" style="margin-top:6px">${esc(cfg.add)}</button>`;
+  fill($("#"+id));
+}
+document.addEventListener("click", e=>{
+  const a = e.target.closest("[data-add-row]"); if (a){ const cfg = TABLES[a.dataset.addRow]; const arr = getPath(state, cfg.path); arr.push({...cfg.blank}); save(); renderTable(a.dataset.addRow); if (a.dataset.addRow==="locTable") renderLocations(); return; }
+  const d = e.target.closest("[data-del-row]"); if (d){ const cfg = TABLES[d.dataset.delRow]; getPath(state, cfg.path).splice(+d.dataset.i,1); save(); renderTable(d.dataset.delRow); if (d.dataset.delRow==="locTable") renderLocations(); renderChecks(); }
+});
+
+function renderRoleChips(){
+  $("#roleChips").innerHTML = ROLE_FAMILIES.map(([k,l])=>`<label class="chip"><input type="checkbox" value="${k}" ${state.profile.settings.roles.includes(k)?"checked":""}> ${esc(l)}</label>`).join("");
+}
+$("#roleChips").addEventListener("change", ()=>{ state.profile.settings.roles = $$("#roleChips input:checked").map(i=>i.value); save(); });
+
+const OWNERSHIP = [["led","Led it"],["co-led","Co-led it"],["contributed","Contributed a part"],["supported","Supported others"],["unclear","Unclear: please set"]];
+function bankSummaryHtml(e){
+  const own = e.ownership_level || "unclear";
+  return `<span class="id">${esc(e.id||"")}</span><strong>${esc(e.project||"Untitled")}</strong><span class="muted">${esc(e.employer||"")}${e.period?" · "+esc(e.period):""}</span><span class="own ${own==="unclear"?"unclear":""}">${esc((OWNERSHIP.find(o=>o[0]===own)||[own,own])[1])}</span>`;
+}
+function renderBank(){
+  const bank = state.profile.bank;
+  $("#bankCount").textContent = bank.length ? `${bank.length} entr${bank.length===1?"y":"ies"}` : "";
+  if (!bank.length){ $("#bankList").innerHTML = `<div class="note">No entries yet. Paste your CV above, then click <strong>Build my profile from my CV</strong>.</div>`; return; }
+  $("#bankList").innerHTML = bank.map((e,i)=>{
+    const p = `profile.bank.${i}`;
+    return `<details class="ev" data-i="${i}"><summary>${bankSummaryHtml(e)}</summary><div class="body">
+      <div class="grid3">
+        <div><label>Project / achievement</label><input type="text" data-bind="${p}.project"></div>
+        <div><label>Employer</label><input type="text" data-bind="${p}.employer"></div>
+        <div><label>Period</label><input type="text" data-bind="${p}.period"></div>
+      </div>
+      <div class="grid2">
+        <div><label>How to describe the client</label><input type="text" data-bind="${p}.client_descriptor" placeholder="e.g. a Hong Kong healthcare investor"></div>
+        <div><label>My ownership</label><select data-bind="${p}.ownership_level">${OWNERSHIP.map(o=>`<option value="${o[0]}">${esc(o[1])}</option>`).join("")}</select></div>
+      </div>
+      <label>Context: situation and why it mattered</label><textarea data-bind="${p}.context"></textarea>
+      <label>What I personally did <span class="opt">(be exact, not inflated)</span></label><textarea data-bind="${p}.my_role"></textarea>
+      <div class="grid2">
+        <div><label>Actions <span class="opt">(one per line)</span></label><textarea data-type="lines" data-bind="${p}.actions"></textarea></div>
+        <div><label>Results / outcomes <span class="opt">(one per line)</span></label><textarea data-type="lines" data-bind="${p}.results"></textarea></div>
+      </div>
+      <label>Numbers <span class="opt">(one per line: <code>value | exact</code>, <code>| approximate</code>, <code>| estimate</code>)</span></label>
+      <textarea data-type="metrics" data-bind="${p}.metrics" class="mono" placeholder="8 expert interviews | exact&#10;~US$400m market | approximate"></textarea>
+      <div class="grid2">
+        <div><label>Skills shown <span class="opt">(comma separated)</span></label><input type="text" data-type="csv" data-bind="${p}.skills"></div>
+        <div><label>AI involvement <span class="opt">(if any)</span></label><input type="text" data-bind="${p}.ai_involvement"></div>
+      </div>
+      <div class="grid2">
+        <div><label>Never claim about this <span class="opt">(one per line)</span></label><textarea data-type="lines" data-bind="${p}.do_not_claim" style="min-height:60px"></textarea></div>
+        <div><label>How impressive, 1–5</label><select data-type="number" data-bind="${p}.strength"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+          <div class="row end" style="margin-top:22px"><button class="btn small danger" data-del-entry="${i}">Delete entry</button></div></div>
+      </div>
+    </div></details>`;
+  }).join("");
+  fill($("#bankList"));
+}
+function updateBankSummary(el){ const d = el.closest("details.ev"); if (!d) return; const e = state.profile.bank[+d.dataset.i]; $("summary", d).innerHTML = bankSummaryHtml(e); }
+$("#bankList").addEventListener("click", e=>{ const b = e.target.closest("[data-del-entry]"); if (!b) return; if (!confirm("Delete this entry?")) return; state.profile.bank.splice(+b.dataset.delEntry,1); save(); renderBank(); renderChecks(); });
+$("#btnAddEntry").addEventListener("click", ()=>{
+  const n = state.profile.bank.length+1;
+  state.profile.bank.push({id:"E"+String(n).padStart(2,"0"),project:"",employer:"",period:"",client_descriptor:"",context:"",my_role:"",ownership_level:"unclear",actions:[],results:[],metrics:[],skills:[],ai_involvement:"",strength:3,do_not_claim:[]});
+  save(); renderBank(); const last = $$("#bankList details.ev").pop(); if (last){ last.open = true; last.scrollIntoView({behavior:"smooth",block:"center"}); }
+});
+
+function renderBankQuestions(){
+  const q = state.profile.questions;
+  if (!q){ $("#bankQuestionsBox").innerHTML = ""; return; }
+  $("#bankQuestionsBox").innerHTML = `<div class="note warn"><strong>Claude has questions to make your evidence accurate</strong><div class="md">${mdToHtml(q)}</div>
+    <label>Your answers <span class="opt">(refer to the question numbers; "don't know" is a fine answer)</span></label>
+    <textarea id="bankAnswers"></textarea>
+    <div class="row end" style="margin-top:8px"><button class="btn ghost small" id="btnDismissQ">Skip for now</button><button class="btn primary small" id="btnAnswerQ">Update my evidence bank</button></div></div>`;
+  $("#btnDismissQ").onclick = ()=>{ state.profile.questions = ""; save(); renderBankQuestions(); };
+  $("#btnAnswerQ").onclick = answerBankQuestions;
+}
+
+function renderFeedback(){
+  const fb = state.profile.feedback;
+  $("#feedbackList").innerHTML = fb.length ? fb.map((f,i)=>`<div class="row" style="border-bottom:1px solid var(--line);padding:6px 0;flex-wrap:nowrap"><span class="muted" style="flex:none">${esc(f.date)}</span><span style="flex:1">${esc(f.text)}</span><button class="btn ghost small danger" data-del-fb="${i}">✕</button></div>`).join("") : `<p class="muted">No lessons yet.</p>`;
+}
+$("#feedbackList").addEventListener("click", e=>{ const b = e.target.closest("[data-del-fb]"); if (!b) return; state.profile.feedback.splice(+b.dataset.delFb,1); save(); renderFeedback(); });
+
+function profileStatus(){
+  const p = state.profile;
+  return {
+    sources: !!(p.sources.cv.trim() || p.sources.notes.trim()),
+    bank: p.bank.length > 0,
+    facts: !!(p.facts.name && p.facts.employment.length && p.facts.locations.length),
+    settings: p.settings.roles.length > 0,
+    voice: !!(p.voice.dislike.trim() || p.voice.goodBullets.trim())
+  };
+}
+function renderChecks(){
+  const s = profileStatus();
+  const items = [["sources","CV added"],["bank","Evidence bank built"],["facts","Facts & locations added"],["settings","Role types chosen"],["voice","Voice added (optional)"]];
+  $("#profileChecks").innerHTML = items.map(([k,l])=>`<span class="check ${s[k]?"done":""}">${s[k]?"✓":"○"} ${l}</span>`).join("");
+  $$("[data-step]").forEach(el=>{ el.classList.toggle("done", !!s[el.dataset.step]); });
+}
+function renderLocations(){
+  const sel = $("#jLocation"), cur = sel.value, locs = state.profile.facts.locations.filter(l=>l.name);
+  sel.innerHTML = locs.map(l=>`<option>${esc(l.name)}</option>`).join("") + `<option value="">Other / not listed</option>`;
+  if (cur && locs.some(l=>l.name===cur)) sel.value = cur;
+}
+
+/* File upload: .txt/.md native; .docx via mammoth; .pdf via pdf.js (both loaded on demand from cdnjs) */
+function loadScript(src){ return new Promise((res,rej)=>{ const s = document.createElement("script"); s.src = src; s.onload = res; s.onerror = ()=>rej(new Error("Could not load "+src)); document.head.appendChild(s); }); }
+$("#fileCv").addEventListener("change", async e=>{
+  const f = e.target.files[0]; if (!f) return; e.target.value = "";
+  const st = $("#fileStatus"); st.textContent = "Reading "+f.name+"…";
+  try {
+    let text = "";
+    const ext = f.name.split(".").pop().toLowerCase();
+    if (ext==="txt"||ext==="md") text = await f.text();
+    else if (ext==="docx"){
+      if (!window.mammoth) await loadScript("https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js");
+      text = (await window.mammoth.extractRawText({arrayBuffer: await f.arrayBuffer()})).value;
+    } else if (ext==="pdf"){
+      if (!window.pdfjsLib) await loadScript("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js");
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+      const pdf = await window.pdfjsLib.getDocument({data: new Uint8Array(await f.arrayBuffer())}).promise;
+      for (let i=1;i<=pdf.numPages;i++){
+        const c = await (await pdf.getPage(i)).getTextContent(); let lastY = null, line = "";
+        for (const it of c.items){ if (lastY!==null && Math.abs(it.transform[5]-lastY)>2){ text += line.trim()+"\n"; line=""; } line += it.str + (it.hasEOL?"\n":" "); lastY = it.transform[5]; }
+        text += line.trim()+"\n\n";
+      }
+    } else throw new Error("Unsupported file type");
+    const cur = state.profile.sources.cv.trim();
+    state.profile.sources.cv = (cur ? cur+"\n\n----- "+f.name+" -----\n" : "") + text.trim();
+    save(); fill($("#secSources")); renderChecks(); st.textContent = "Added text from "+f.name+". Please check it looks right.";
+  } catch(err){ st.textContent = "Couldn't read that file ("+err.message+"). Open it and paste the text instead."; }
+});
+
+/* =====================================================================
+   CANDIDATE PACKAGE (what Claude receives about the person)
+   ===================================================================== */
+function candidatePackage({includeSources=true}={}){
+  const p = state.profile, s = p.settings;
+  const roleNames = s.roles.map(r=>(ROLE_FAMILIES.find(x=>x[0]===r)||[r,r])[1]).join(", ") || "not specified";
+  const facts = {name:p.facts.name, employment:p.facts.employment, education:p.facts.education, certifications:p.facts.certifications, languages:p.facts.languages};
+  const fb = p.feedback.map(f=>"- "+f.text).join("\n") || "(none yet)";
+  let out = `## CANDIDATE SETTINGS
+- Career stage: ${s.seniority}
+- Page limit: ${s.pageLength} page${s.pageLength>1?"s":""} (strict)
+- Spelling: ${s.spelling} English
+- Target role families: ${roleNames}
+- AI experience level: ${s.aiLevel} (never claim above this)
+
+## FACT SHEET (locked: copy titles, employers, dates and education exactly)
+${JSON.stringify(facts, null, 1)}
+
+## VOICE & PREFERENCES
+- Words or phrases the candidate dislikes (never use): ${p.voice.dislike || "(none given)"}
+- Words the candidate likes: ${p.voice.like || "(none given)"}
+- Bullets the candidate considers right (match this style): ${p.voice.goodBullets || "(none given)"}
+- Bullets that feel wrong: ${p.voice.badBullets || "(none given)"}
+- Tone: ${p.voice.tone || "(not specified)"}
+- Never claim or mention: ${p.voice.boundaries || "(none given)"}
+- Client confidentiality: ${p.voice.confidentiality || "Do not name clients; use neutral descriptors."}
+
+## LESSONS FROM THE CANDIDATE'S PREVIOUS EDITS (follow these)
+${fb}
+
+## EVIDENCE BANK (authoritative source of facts)
+${p.bank.length ? JSON.stringify(p.bank, null, 1) : "(empty: use SOURCE MATERIAL below as the evidence)"}`;
+  if (includeSources && (p.sources.cv.trim() || p.sources.notes.trim())){
+    out += `\n\n## SOURCE MATERIAL (the candidate's own CV and notes; ${p.bank.length ? "reference only, the evidence bank wins where they differ" : "the only evidence available"})\n<source_cv>\n${p.sources.cv}\n</source_cv>\n<source_notes>\n${p.sources.notes}\n</source_notes>`;
+  }
+  return out;
+}
+
+/* =====================================================================
+   RUNNING A TASK: API mode or copy-paste mode
+   ===================================================================== */
+function isApi(){ return state.config.mode==="api" && state.config.apiKey.trim(); }
+function renderModePill(){ $("#modePill").textContent = isApi() ? "API mode · "+(state.config.model.includes("sonnet")?"Sonnet 5":"Opus 5") : "Copy-paste mode"; }
+
+function apiHeaders(){
+  const h = {"content-type":"application/json","x-api-key":state.config.apiKey.trim(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"};
+  if (state.config.model==="claude-opus-5") h["anthropic-beta"] = "server-side-fallback-2026-07-01";
+  return h;
+}
+function apiBody(extra){
+  const b = {model: state.config.model, thinking:{type:"adaptive"}, output_config:{effort:"high"}, ...extra};
+  if (state.config.model==="claude-opus-5") b.fallbacks = "default";  // re-runs a rare safety decline on another model server-side
+  return b;
+}
+async function apiError(res){
+  let msg = res.status+" "+res.statusText;
+  try { const j = await res.json(); if (j.error && j.error.message) msg = j.error.message; } catch(_){}
+  if (res.status===401) msg = "Your API key was rejected. Check it in Settings.";
+  if (res.status===429) msg = "Rate limited or out of credit. Wait a minute or check your Anthropic account. ("+msg+")";
+  if (res.status===529 || res.status>=500) msg = "Anthropic's service is busy. Try again shortly. ("+msg+")";
+  return new Error(msg);
+}
+async function streamClaude(system, user, onText, maxTokens=32000){
+  const res = await fetch("https://api.anthropic.com/v1/messages", {method:"POST", headers:apiHeaders(),
+    body: JSON.stringify(apiBody({max_tokens:maxTokens, stream:true, system, messages:[{role:"user",content:user}]}))});
+  if (!res.ok) throw await apiError(res);
+  const reader = res.body.getReader(), dec = new TextDecoder();
+  let buf = "", text = "", stop = null;
+  for (;;){
+    const {done, value} = await reader.read(); if (done) break;
+    buf += dec.decode(value, {stream:true});
+    let idx;
+    while ((idx = buf.indexOf("\n\n")) >= 0){
+      const chunk = buf.slice(0, idx); buf = buf.slice(idx+2);
+      const data = chunk.split("\n").filter(l=>l.startsWith("data:")).map(l=>l.slice(5).trim()).join("\n");
+      if (!data) continue;
+      let ev; try { ev = JSON.parse(data); } catch(_){ continue; }
+      if (ev.type==="content_block_delta" && ev.delta && ev.delta.type==="text_delta"){ text += ev.delta.text; onText(text); }
+      else if (ev.type==="message_delta" && ev.delta){ stop = ev.delta.stop_reason || stop; }
+      else if (ev.type==="error"){ throw new Error((ev.error && ev.error.message) || "The response stream failed."); }
+    }
+  }
+  if (stop==="refusal") throw new Error("Claude declined this request. Try rephrasing the job description or your notes.");
+  if (stop==="max_tokens") toast("The answer was cut off because it was too long. Try again or shorten your sources.");
+  return text;
+}
+async function fetchJdFromUrl(url){
+  let messages = [{role:"user", content:`Open this job posting and extract the job description.\nURL: ${url}\n\nReply with only:\n<company>company name</company>\n<role>role title</role>\n<location>city or country</location>\n<jd>the full job description text, as close to verbatim as possible, without navigation, cookie or legal boilerplate</jd>\nIf the page can't be opened or has no job description, reply only with <error>short reason</error>.`}];
+  for (let i=0;i<4;i++){
+    const res = await fetch("https://api.anthropic.com/v1/messages", {method:"POST", headers:apiHeaders(),
+      body: JSON.stringify(apiBody({max_tokens:16000, messages, tools:[{type:"web_fetch_20260209", name:"web_fetch", max_uses:3}]}))});
+    if (!res.ok) throw await apiError(res);
+    const j = await res.json();
+    if (j.stop_reason==="pause_turn"){ messages = [...messages, {role:"assistant", content:j.content}]; continue; }
+    if (j.stop_reason==="refusal") throw new Error("Claude declined to read this page.");
+    return (j.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("");
+  }
+  throw new Error("Reading the page took too long.");
+}
+
+let manualResolve = null;
+function runManual(title, system, user, extraHint){
+  const prompt = `Please act exactly as described below. First read the METHOD, then do the TASK. Reply only with the tagged blocks the task asks for.\n\n=== METHOD ===\n${system}\n\n=== TASK ===\n${user}`;
+  $("#mTitle").textContent = title;
+  $("#mPrompt").value = prompt;
+  $("#mReply").value = "";
+  $("#mExtra").textContent = extraHint || "";
+  $("#mSize").textContent = Math.round(prompt.length/1000)+"k characters";
+  $("#manualDlg").showModal();
+  return new Promise((resolve)=>{ manualResolve = resolve; });
+}
+$("#mCopy").addEventListener("click", async ()=>{ const ok = await copyText($("#mPrompt").value); toast(ok ? "Copied. Paste it into a new Claude chat." : "Couldn't copy automatically. Open 'Show the instructions' and copy by hand."); });
+$("#mCancel").addEventListener("click", ()=>{ $("#manualDlg").close(); if (manualResolve){ manualResolve(null); manualResolve = null; } });
+$("#mUse").addEventListener("click", ()=>{ const v = $("#mReply").value.trim(); if (!v){ toast("Paste Claude's reply first."); return; } $("#manualDlg").close(); if (manualResolve){ manualResolve(v); manualResolve = null; } });
+
+/* Runs a task in whichever mode is active. Returns the reply text or null. */
+async function runTask({title, user, workingEl, extraHint}){
+  if (!isApi()) return runManual(title, METHOD, user, extraHint);
+  const box = workingEl; const t0 = Date.now();
+  box.innerHTML = `<div class="card"><div class="working"><div class="spin"></div><span class="wtxt">Claude is thinking…</span></div><details style="margin-top:10px"><summary class="muted" style="cursor:pointer">Show live output</summary><div class="stream"></div></details></div>`;
+  const wtxt = $(".wtxt", box), streamEl = $(".stream", box);
+  const timer = setInterval(()=>{ const s = Math.round((Date.now()-t0)/1000); wtxt.textContent = (streamEl.textContent ? "Writing… " : "Claude is thinking… ") + Math.floor(s/60)+":"+String(s%60).padStart(2,"0"); }, 1000);
+  try {
+    const text = await streamClaude(METHOD, user, t=>{ streamEl.textContent = t; streamEl.scrollTop = streamEl.scrollHeight; });
+    box.innerHTML = ""; return text;
+  } catch(err){
+    box.innerHTML = `<div class="note bad" style="margin-bottom:16px"><strong>Something went wrong.</strong> ${esc(err.message)}</div>`;
+    if (/Failed to fetch|NetworkError/i.test(err.message)) box.innerHTML += `<div class="note">Check your internet connection. If you're offline, switch to copy-paste mode in Settings.</div>`;
+    return null;
+  } finally { clearInterval(timer); }
+}
+
+/* =====================================================================
+   ONBOARDING: build the evidence bank
+   ===================================================================== */
+const BANK_SCHEMA = `Each evidence entry is a JSON object:
+{"id":"E01","project":"short name","employer":"","period":"Mar 2025 – May 2025","client_descriptor":"approved anonymous description, e.g. a Hong Kong healthcare investor","context":"situation and why it mattered","my_role":"exactly what the candidate personally did and owned","ownership_level":"led|co-led|contributed|supported|unclear","actions":["…"],"results":["…"],"metrics":[{"value":"8 expert interviews","provenance":"exact|approximate|estimate|unknown"}],"skills":["…"],"ai_involvement":"","strength":1-5,"do_not_claim":["…"]}`;
+
+$("#btnBuildBank").addEventListener("click", async ()=>{
+  const p = state.profile;
+  if (!p.sources.cv.trim() && !p.sources.notes.trim()){ toast("Paste your CV first (step 1)."); $("#srcCv").focus(); return; }
+  const user = `TASK: ONBOARDING, build the candidate's profile from their source material.
+
+${candidatePackage()}
+
+Instructions:
+- Extract only what the source material states. Do not infer or invent numbers, outcomes or responsibilities.
+- Create one evidence entry per distinct project, engagement or achievement (not one per CV bullet). Merge bullets that describe the same project. Include education or extracurricular achievements only if they're substantial.
+- Set ownership_level to "unclear" when the source doesn't make it clear what the candidate personally owned.
+- Mark a number's provenance as "exact" only if it is stated as a precise figure; use "approximate" for "~", "c.", "over", "+" or rounded figures.
+- Leave client_descriptor empty unless the source already describes the client; never put a client's real name there.
+- strength: how impressive the entry is to a senior recruiter (1–5).
+- Then write up to 8 short, specific questions whose answers would most improve accuracy or strength (ownership, outcomes, exact numbers, how clients may be described). Number them and reference entry IDs.
+
+${BANK_SCHEMA}
+
+Reply with exactly these blocks:
+<fact_sheet_json>{"name":"","email":"","phone":"","linkedin":"","location":"","employment":[{"employer":"","title":"exact title","start":"Mon YYYY","end":"Mon YYYY or Present","location":""}],"education":[{"institution":"","degree":"","dates":"","grade":""}],"certifications":"","languages":""}</fact_sheet_json>
+<evidence_bank_json>[ …entries… ]</evidence_bank_json>
+<suggested_roles>comma-separated role families from: ${ROLE_FAMILIES.map(r=>r[0]).join(", ")}</suggested_roles>
+<questions>numbered questions</questions>`;
+  const reply = await runTask({title:"Build your profile", user, workingEl: $("#bankQuestionsBox")});
+  if (!reply) return;
+  applyOnboarding(reply);
+});
+
+function applyOnboarding(reply){
+  const facts = parseJsonLoose(tag(reply,"fact_sheet_json"));
+  const bank = parseJsonLoose(tag(reply,"evidence_bank_json"));
+  if (!Array.isArray(bank)){ toast("Couldn't read the evidence bank in that reply. Make sure you pasted Claude's whole answer."); return; }
+  const p = state.profile;
+  if (facts){
+    const f = p.facts;
+    for (const k of ["name","email","linkedin","certifications","languages"]) if (!f[k] && facts[k]) f[k] = facts[k];
+    if (!f.employment.length && Array.isArray(facts.employment)) f.employment = facts.employment.map(e=>({employer:e.employer||"",title:e.title||"",start:e.start||"",end:e.end||"",location:e.location||""}));
+    if (!f.education.length && Array.isArray(facts.education)) f.education = facts.education.map(e=>({institution:e.institution||"",degree:e.degree||"",dates:e.dates||"",grade:e.grade||""}));
+    if (!f.locations.length && (facts.location || facts.phone)) f.locations = [{name:facts.location||"", phone:facts.phone||"", visa:""}];
+  }
+  if (p.bank.length && !confirm("Replace your existing evidence bank with this new one?\n\nOK = replace   ·   Cancel = add the new entries to the existing ones")){
+    const ids = new Set(p.bank.map(e=>e.id)); let n = p.bank.length;
+    for (const e of bank){ if (ids.has(e.id)) e.id = "E"+String(++n).padStart(2,"0"); p.bank.push(e); }
+  } else p.bank = bank;
+  const roles = tag(reply,"suggested_roles").split(",").map(x=>x.trim()).filter(r=>ROLE_FAMILIES.some(f=>f[0]===r));
+  if (!p.settings.roles.length && roles.length) p.settings.roles = roles;
+  p.questions = tag(reply,"questions");
+  saveNow(); renderProfile(); $("#secFacts").open = true;
+  toast(`Added ${bank.length} evidence entries. Please check them and answer the questions.`);
+}
+
+async function answerBankQuestions(){
+  const answers = ($("#bankAnswers")||{}).value || "";
+  if (!answers.trim()){ toast("Write your answers first."); return; }
+  const user = `TASK: UPDATE THE EVIDENCE BANK with the candidate's answers.
+
+## CURRENT EVIDENCE BANK
+${JSON.stringify(state.profile.bank, null, 1)}
+
+## QUESTIONS THAT WERE ASKED
+${state.profile.questions}
+
+## CANDIDATE'S ANSWERS
+${answers}
+
+Instructions: update only what the answers support (ownership_level, my_role, results, metrics with correct provenance, client_descriptor, do_not_claim). Keep IDs stable. "Don't know" means leave it as is and don't ask again. Do not invent anything.
+${BANK_SCHEMA}
+
+Reply with exactly:
+<evidence_bank_json>[ full updated bank ]</evidence_bank_json>
+<questions>at most 4 remaining high-value questions, numbered, or the single word none</questions>`;
+  const reply = await runTask({title:"Update your evidence bank", user, workingEl: $("#bankQuestionsBox")});
+  if (!reply) { renderBankQuestions(); return; }
+  const bank = parseJsonLoose(tag(reply,"evidence_bank_json"));
+  if (!Array.isArray(bank)){ toast("Couldn't read the updated bank. Make sure you pasted the whole reply."); renderBankQuestions(); return; }
+  state.profile.bank = bank;
+  const q = tag(reply,"questions"); state.profile.questions = (/^none\.?$/i.test(q.trim()) ? "" : q);
+  saveNow(); renderBank(); renderBankQuestions(); renderChecks(); toast("Evidence bank updated.");
+}
+
+/* =====================================================================
+   TAILOR
+   ===================================================================== */
+let current = null; // current application object
+
+function renderTailorGuard(){
+  renderLocations();
+  const s = profileStatus();
+  $("#tailorGuard").innerHTML = (!s.sources && !s.bank)
+    ? `<div class="note warn" style="margin-bottom:16px">Your profile is empty. <a href="#" data-go="profile">Add your CV first</a>. CV Studio can only use facts from your profile.</div>`
+    : (!s.bank ? `<div class="note" style="margin-bottom:16px">Tip: <a href="#" data-go="profile">build your evidence bank</a> first for more accurate CVs. Until then, CV Studio will work from your pasted CV.</div>` : "");
+}
+$("#btnClearJob").addEventListener("click", ()=>{ ["#jCompany","#jRole","#jUrl","#jJd","#jSteer"].forEach(s=>$(s).value=""); $("#jChannel").value=""; });
+
+$("#btnFetchJd").addEventListener("click", async ()=>{
+  const url = $("#jUrl").value.trim();
+  if (!url){ toast("Paste a link first."); return; }
+  if (!isApi()){ toast("Reading links needs an API key (Settings). In copy-paste mode, open the page and copy the description."); return; }
+  const b = $("#btnFetchJd"); b.disabled = true; b.textContent = "Reading…";
+  try {
+    const r = await fetchJdFromUrl(url);
+    const err = tag(r,"error"); if (err) throw new Error(err);
+    const jd = tag(r,"jd"); if (!jd) throw new Error("No job description found on that page.");
+    $("#jJd").value = jd;
+    if (!$("#jCompany").value) $("#jCompany").value = tag(r,"company");
+    if (!$("#jRole").value) $("#jRole").value = tag(r,"role");
+    const loc = tag(r,"location").toLowerCase();
+    const match = state.profile.facts.locations.find(l=>l.name && (loc.includes(l.name.toLowerCase()) || l.name.toLowerCase().includes(loc)));
+    if (match) $("#jLocation").value = match.name;
+    toast("Job description added. Check it's complete.");
+  } catch(err){ toast("Couldn't read the link: "+err.message+" Paste the description instead."); }
+  finally { b.disabled = false; b.textContent = "Read link"; }
+});
+
+function headerMarkdown(locationName){
+  const f = state.profile.facts;
+  const loc = f.locations.find(l=>l.name===locationName) || f.locations[0] || {};
+  const contact = [f.email, loc.phone, f.linkedin, f.website].filter(Boolean).join(" · ");
+  return `# ${f.name || "Your Name"}\n${contact}${loc.visa ? "\n"+loc.visa : ""}`;
+}
+function stripHeader(md){
+  // If the model wrote a header anyway, drop everything before the first "## ".
+  const i = md.search(/^##\s/m); return i > 0 ? md.slice(i) : md;
+}
+
+$("#btnTailor").addEventListener("click", async ()=>{
+  const jd = $("#jJd").value.trim(), url = $("#jUrl").value.trim();
+  if (!jd && !url){ toast("Paste the job description first."); $("#jJd").focus(); return; }
+  const s = profileStatus();
+  if (!s.sources && !s.bank){ toast("Add your CV in 'My profile' first."); return; }
+  const job = {company:$("#jCompany").value.trim(), role:$("#jRole").value.trim(), location:$("#jLocation").value, channel:$("#jChannel").value, url, jd, steer:$("#jSteer").value.trim()};
+  const user = `TASK: TAILOR A CV for the role below.
+
+${candidatePackage()}
+
+## THE ROLE
+- Company: ${job.company || "(see JD)"}
+- Role: ${job.role || "(see JD)"}
+- Location: ${job.location || "(see JD)"}
+- Application channel: ${job.channel || "not specified"}${job.channel==="portal" ? " (ATS screening likely: make sure must-have terms appear in context)" : ""}
+${job.url ? "- Posting link: "+job.url+(jd ? "" : " (no JD text was pasted: open this link to read the job description; if you can't, say so in positioning_brief and stop)") : ""}
+- Candidate's steer: ${job.steer || "(none)"}
+<job_description>
+${jd}
+</job_description>
+
+Follow the METHOD: role read → requirements → evidence map → positioning thesis → gap triage → space budget → write → quality gates → 6-second recruiter read. Keep the analysis to yourself; show only the blocks below.
+
+The CV format (the app adds the name and contact header, so START at the first section):
+## SUMMARY            (optional; omit the section entirely if not useful for this role)
+text
+## EXPERIENCE
+### Employer | City, Country
+**Exact title** | Mon YYYY – Mon YYYY
+- bullet
+## EDUCATION
+### Institution | City, Country
+**Degree, grade** | YYYY – YYYY
+- optional bullet
+## SKILLS & LANGUAGES
+- **Label:** items
+Use only these markers. No tables and no other markdown.
+
+Reply with exactly these blocks, in this order:
+<positioning_brief>3–5 lines: the positioning thesis, the 3 proof points, and one line on the role's real problem</positioning_brief>
+<cv>the full CV body in the format above</cv>
+<tailoring_decisions>5–8 bullets: what you emphasised, compressed or cut, and why</tailoring_decisions>
+<gaps>bullets: each must-have or differentiator with weak or no coverage, rated high/medium/low, with a concrete suggestion (cover letter, interview, or "do you have evidence of X?"). Start with "DEAL-BREAKER:" if one applies.</gaps>
+<verification_questions>numbered questions whose answers would strengthen the CV, plus any derived or approximate numbers the candidate should confirm. Write "None" if there are none.</verification_questions>
+<evidence_used>bullets: each evidence ID used and where, plus notable evidence left out and why</evidence_used>`;
+  const reply = await runTask({title:"Create your tailored CV", user, workingEl: $("#tailorWorking"), extraHint: job.url && !jd ? "Claude will need to open the job link: make sure web access is on in your Claude chat." : ""});
+  if (!reply) return;
+  const cv = tag(reply,"cv");
+  if (!cv){ toast("Couldn't find the CV in that reply. Make sure you pasted the whole answer."); return; }
+  current = {
+    id: uid(), created: new Date().toISOString(), job,
+    result: {brief:tag(reply,"positioning_brief"), decisions:tag(reply,"tailoring_decisions"), gaps:tag(reply,"gaps"), questions:tag(reply,"verification_questions"), evidence:tag(reply,"evidence_used")},
+    versions: [{at:new Date().toISOString(), note:"First draft", cv: stripHeader(cv)}], active: 0
+  };
+  state.applications.unshift(current); saveNow();
+  showResult(true);
+});
+
+function showResult(scroll){
+  if (!current) return;
+  $("#resultArea").hidden = false;
+  const j = current.job;
+  $("#resTitle").textContent = [j.role, j.company].filter(Boolean).join(" · ") || "Tailored CV";
+  const r = current.result;
+  $("#paneBrief").innerHTML = mdToHtml(r.brief) || "<p class='muted'>No brief.</p>";
+  $("#paneDecisions").innerHTML = mdToHtml(r.decisions);
+  $("#paneGaps").innerHTML = mdToHtml(r.gaps) || "<p class='muted'>No gaps flagged.</p>";
+  $("#paneQuestions").innerHTML = (mdToHtml(r.questions) || "<p class='muted'>None.</p>") + `<p class="muted">Answer these in the CV tab under <strong>Ask for changes</strong>. For facts you'll use again, also add them to your evidence bank.</p>`;
+  $("#paneChanges").innerHTML = mdToHtml(r.evidence);
+  const qCount = (r.questions.match(/^\s*\d+[.)]/gm)||[]).length;
+  $("#resTabs [data-pane=questions]").innerHTML = "Questions for you" + (qCount ? `<span class="count">${qCount}</span>` : "");
+  $("#resTabs [data-pane=gaps]").innerHTML = "Gaps & risks" + (/DEAL-BREAKER/i.test(r.gaps) ? `<span class="count">!</span>` : "");
+  $("#versionSel").innerHTML = current.versions.map((v,i)=>`<option value="${i}">v${i+1} · ${esc(v.note)}</option>`).join("");
+  $("#versionSel").value = current.active;
+  $("#cvEditor").value = current.versions[current.active].cv;
+  renderCv();
+  if (scroll) $("#resultArea").scrollIntoView({behavior:"smooth"});
+}
+$("#resTabs").addEventListener("click", e=>{ const b = e.target.closest("button[data-pane]"); if (!b) return; $$("#resTabs button").forEach(x=>x.classList.toggle("active", x===b)); $$("#resultArea .pane").forEach(p=>p.classList.toggle("active", p.dataset.pane===b.dataset.pane)); if (b.dataset.pane==="cv") renderCv(); });
+$("#versionSel").addEventListener("change", e=>{ current.active = +e.target.value; $("#cvEditor").value = current.versions[current.active].cv; renderCv(); save(); });
+$("#cvEditor").addEventListener("input", ()=>{ if (!current) return; current.versions[current.active].cv = $("#cvEditor").value; save(); renderCv(); });
+
+/* ---- CV rendering ---- */
+function cvInline(s){ return esc(s).replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>").replace(/(^|[^*])\*(?!\s)(.+?)\*(?!\*)/g,"$1<em>$2</em>"); }
+function cvRow(text, cls){ const parts = text.split(/\s+\|\s+/); const l = parts.shift(); return `<div class="cv-row ${cls}"><span class="l">${cvInline(l)}</span>${parts.length?`<span class="r">${cvInline(parts.join(" | "))}</span>`:""}</div>`; }
+function cvToHtml(body, header){
+  const out = []; let inList = false, afterH3 = false;
+  const close = ()=>{ if (inList){ out.push("</ul>"); inList=false; } };
+  const hl = header.split("\n");
+  out.push(`<div class="cv-name">${cvInline(hl[0].replace(/^#\s*/,""))}</div>`);
+  for (const l of hl.slice(1)) if (l.trim()) out.push(`<p class="cv-contact">${cvInline(l)}</p>`);
+  for (const raw of body.split("\n")){
+    const l = raw.trim(); let m;
+    if (!l){ close(); continue; }
+    if ((m = l.match(/^##\s+(.*)$/))){ close(); out.push(`<div class="cv-sec">${cvInline(m[1])}</div>`); afterH3=false; continue; }
+    if ((m = l.match(/^###\s+(.*)$/))){ close(); out.push(cvRow(m[1],"h3")); afterH3=true; continue; }
+    if ((m = l.match(/^[-*•]\s+(.*)$/))){ if (!inList){ out.push("<ul>"); inList=true; } out.push(`<li>${cvInline(m[1])}</li>`); afterH3=false; continue; }
+    close();
+    if (l.includes(" | ")){ out.push(cvRow(l, afterH3 ? "sub" : "")); afterH3=false; continue; }
+    out.push(`<p>${cvInline(l)}</p>`); afterH3=false;
+  }
+  close(); return out.join("");
+}
+function fullCvMarkdown(){ return headerMarkdown(current.job.location) + "\n\n" + $("#cvEditor").value.trim() + "\n"; }
+function renderCv(){
+  if (!current) return;
+  const page = $("#cvPage");
+  page.classList.toggle("serif", state.profile.settings.cvFont==="serif");
+  page.innerHTML = cvToHtml($("#cvEditor").value, headerMarkdown(current.job.location));
+  // page-fit measurement (A4 = 297mm)
+  const mm = page.getBoundingClientRect().width / 210; if (!mm) return;
+  const limit = state.profile.settings.pageLength || 1;
+  const contentBottom = Math.max(0, ...Array.from(page.children).map(c=>c.offsetTop + c.offsetHeight)) + 12*mm;
+  const pages = contentBottom / (297*mm);
+  for (let i=1;i<Math.max(limit+1, Math.ceil(pages)+1);i++){ const line = document.createElement("div"); line.className="page-line"; line.style.top=(297*mm*i)+"px"; line.innerHTML=`<span>end of page ${i}</span>`; if (297*mm*i < contentBottom + 40*mm) page.appendChild(line); }
+  page.style.minHeight = (297*limit)+"mm";
+  const fb = $("#fitBadge");
+  if (pages <= limit){ fb.className = "fit ok"; fb.textContent = `Fits on ${limit} page${limit>1?"s":""} (${Math.round(pages/limit*100)}% full)`; }
+  else { fb.className = "fit over"; fb.textContent = `Over ${limit} page${limit>1?"s":""} by ~${Math.round((pages-limit)*100)}% of a page`; }
+  renderQc(pages, limit);
+}
+
+/* ---- automatic checks (deterministic, no AI) ---- */
+function renderQc(pages, limit){
+  const body = $("#cvEditor").value, issues = [], ok = [];
+  const bullets = body.split("\n").filter(l=>/^\s*[-*•]\s+/.test(l)).map(l=>l.replace(/^\s*[-*•]\s+/,"").trim());
+  const text = body.toLowerCase();
+  const userBanned = state.profile.voice.dislike.split(/[,\n;]/).map(x=>x.trim().toLowerCase()).filter(Boolean);
+  const banned = Array.from(new Set([...DEFAULT_BANNED, ...userBanned]));
+  const likes = state.profile.voice.like.toLowerCase();
+  const found = banned.filter(w => !likes.includes(w) && new RegExp("(^|[^a-z])"+w.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"([^a-z]|$)","i").test(text));
+  if (found.length) issues.push(`Words to avoid: <strong>${found.map(esc).join(", ")}</strong>`); else ok.push("No clichés or disliked words");
+  if (pages > limit) issues.push(`Longer than ${limit} page${limit>1?"s":""}`); else ok.push("Within page limit");
+  const verbs = {}; bullets.forEach(b=>{ const v = (b.replace(/\*\*/g,"").match(/^[A-Za-z-]+/)||[""])[0].toLowerCase(); if (v) verbs[v]=(verbs[v]||0)+1; });
+  const rep = Object.entries(verbs).filter(([,n])=>n>2).map(([v,n])=>`${v} (${n}×)`);
+  if (rep.length) issues.push("Verbs used more than twice: "+esc(rep.join(", "))); else ok.push("Varied verbs");
+  const long = bullets.filter(b=>b.split(/\s+/).length>32).length;
+  if (long) issues.push(`${long} bullet${long>1?"s are":" is"} longer than ~2 lines`); else ok.push("Bullets are concise");
+  const firstPerson = bullets.filter(b=>/^(i|my|we)\b/i.test(b)).length;
+  if (firstPerson) issues.push(`${firstPerson} bullet${firstPerson>1?"s start":" starts"} with I/my/we`);
+  if (/—/.test(body)) issues.push("Contains em-dashes (—): commas read more naturally");
+  // fact-lock: titles
+  const titleIssues = [];
+  for (const e of state.profile.facts.employment){
+    if (!e.employer || !e.title) continue;
+    if (text.includes(e.employer.toLowerCase()) && !text.includes(e.title.toLowerCase())) titleIssues.push(`${esc(e.employer)}: expected title “${esc(e.title)}”`);
+  }
+  if (titleIssues.length) issues.push("Title doesn't match your profile: "+titleIssues.join("; ")); else if (state.profile.facts.employment.length) ok.push("Job titles match your profile");
+  const numbers = (body.match(/\d/g)||[]).length ? bullets.filter(b=>/\d/.test(b)).length : 0;
+  if (bullets.length) ok.push(`${numbers}/${bullets.length} bullets carry a number`);
+  $("#qcBox").className = "note " + (issues.length ? "warn" : "ok");
+  $("#qcBox").innerHTML = `<strong>Automatic checks</strong>${issues.length?`<ul class="qc-list">${issues.map(i=>"<li>⚠ "+i+"</li>").join("")}</ul>`:""}<ul class="qc-list">${ok.map(i=>"<li>✓ "+esc(i)+"</li>").join("")}</ul><div class="muted" style="margin-top:4px">These checks are mechanical. Always read the CV against your own memory of the facts.</div>`;
+}
+
+/* ---- export ---- */
+$("#btnPrint").addEventListener("click", ()=>{
+  if (!current) return;
+  const clone = $("#cvPage").cloneNode(true);
+  $$(".page-line", clone).forEach(x=>x.remove());
+  $("#printRoot").replaceChildren(clone);
+  const prevTitle = document.title; document.title = `CV_${slug(state.profile.facts.name)}_${slug(current.job.company)}`;
+  document.body.classList.add("print-cv");
+  window.print();
+  setTimeout(()=>{ document.body.classList.remove("print-cv"); $("#printRoot").replaceChildren(); document.title = prevTitle; }, 300);
+});
+$("#btnMd").addEventListener("click", ()=>{ if (current) download(`CV_${slug(state.profile.facts.name)}_${slug(current.job.company)}.md`, fullCvMarkdown(), "text/markdown"); });
+$("#btnWord").addEventListener("click", ()=>{
+  if (!current) return;
+  const serif = state.profile.settings.cvFont==="serif";
+  const font = serif ? "Georgia, 'Times New Roman', serif" : "Calibri, Arial, sans-serif";
+  const html = cvToHtml($("#cvEditor").value, headerMarkdown(current.job.location))
+    .replace(/<div class="cv-name">(.*?)<\/div>/, '<p style="text-align:center;font-size:19pt;font-weight:bold;margin:0">$1</p>')
+    .replace(/<p class="cv-contact">/g,'<p style="text-align:center;font-size:9.5pt;margin:0">')
+    .replace(/<div class="cv-sec">(.*?)<\/div>/g,'<p style="font-size:10.5pt;font-weight:bold;text-transform:uppercase;border-bottom:1px solid #000;margin:9pt 0 3pt">$1</p>')
+    .replace(/<div class="cv-row ([^"]*)"><span class="l">(.*?)<\/span>(?:<span class="r">(.*?)<\/span>)?<\/div>/g, (m,cls,l,r)=>`<table width="100%" cellspacing="0" cellpadding="0" style="margin-top:${cls.includes("h3")?"5pt":"0"}"><tr><td style="font-size:10.3pt;${cls.includes("h3")?"font-weight:bold;":""}${cls.includes("sub")?"font-style:italic;":""}">${l}</td><td align="right" style="font-size:10.3pt;${cls.includes("h3")?"font-weight:bold;":""}${cls.includes("sub")?"font-style:italic;":""}">${r||""}</td></tr></table>`);
+  const doc = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>CV</title>
+<style>@page{size:21cm 29.7cm;margin:1.3cm 1.5cm}body{font-family:${font};font-size:10.3pt;line-height:1.25}ul{margin:2pt 0 0 0}li{margin:1pt 0}p{margin:3pt 0}</style></head><body>${html}</body></html>`;
+  download(`CV_${slug(state.profile.facts.name)}_${slug(current.job.company)}.doc`, "﻿"+doc, "application/msword");
+});
+
+/* ---- refine & lessons ---- */
+$("#btnRefine").addEventListener("click", async ()=>{
+  if (!current) return;
+  const req = $("#refineReq").value.trim(); if (!req){ toast("Describe the change you want."); return; }
+  const user = `TASK: REVISE A TAILORED CV.
+
+${candidatePackage({includeSources: !state.profile.bank.length})}
+
+## THE ROLE
+${current.job.company} · ${current.job.role} · ${current.job.location}
+<job_description>
+${current.job.jd}
+</job_description>
+
+## POSITIONING BRIEF (keep unless the request changes it)
+${current.result.brief}
+
+## CURRENT CV
+<current_cv>
+${$("#cvEditor").value}
+</current_cv>
+
+## THE CANDIDATE'S REQUEST
+${req}
+
+Apply the request while keeping every METHOD rule. If the request includes new facts (answers to questions), you may use them. If the request asks for something that would break factual integrity, don't do it and explain why in change_note.
+Reply with exactly:
+<cv>the full revised CV body, same format, starting at the first ## section</cv>
+<change_note>one short line describing what changed</change_note>
+<new_facts>bullets: any new facts from the request worth adding to the evidence bank, or None</new_facts>`;
+  const reply = await runTask({title:"Revise your CV", user, workingEl: $("#tailorWorking")});
+  if (!reply) return;
+  const cv = tag(reply,"cv"); if (!cv){ toast("Couldn't find the revised CV in that reply."); return; }
+  current.versions.push({at:new Date().toISOString(), note: tag(reply,"change_note").slice(0,80) || "Revision", cv: stripHeader(cv)});
+  current.active = current.versions.length-1;
+  const nf = tag(reply,"new_facts");
+  if (nf && !/^none\.?$/i.test(nf.trim())) current.result.questions += `\n\n**New facts to add to your evidence bank:**\n${nf}`;
+  $("#refineReq").value = ""; saveNow(); showResult(false); toast("Revised. The previous version is still in the version menu.");
+});
+$("#btnLesson").addEventListener("click", ()=>{
+  const t = $("#lessonText").value.trim(); if (!t){ toast("Write the lesson first."); return; }
+  state.profile.feedback.push({date: today(), text: t}); $("#lessonText").value = ""; saveNow(); renderFeedback(); toast("Saved. Future CVs will follow this.");
+});
+
+/* =====================================================================
+   REVIEW
+   ===================================================================== */
+$("#btnUseLatest").addEventListener("click", ()=>{ const a = state.applications[0]; if (!a){ toast("No tailored CV yet."); return; } $("#rCv").value = headerMarkdown(a.job.location)+"\n\n"+a.versions[a.active].cv; $("#rJd").value = a.job.jd; });
+$("#btnUseSource").addEventListener("click", ()=>{ if (!state.profile.sources.cv.trim()){ toast("No CV in your profile yet."); return; } $("#rCv").value = state.profile.sources.cv; });
+$("#btnReview").addEventListener("click", async ()=>{
+  const cv = $("#rCv").value.trim(), jd = $("#rJd").value.trim();
+  if (!cv){ toast("Paste a CV to review."); return; }
+  const user = `TASK: REVIEW A CV as a senior strategy recruiter and CV expert, using the METHOD's standards.
+${state.profile.bank.length ? "\nThe candidate's evidence bank is included, so you can spot claims that aren't supported and strong evidence that's missing.\n\n"+candidatePackage({includeSources:false}) : ""}
+
+<cv_to_review>
+${cv}
+</cv_to_review>
+${jd ? "<job_description>\n"+jd+"\n</job_description>" : "(No job description: judge it as a general CV for the candidate's target roles.)"}
+
+Reply inside <review></review> using this markdown structure:
+## Verdict
+2–3 sentences: how a senior recruiter would react in the first 6 seconds, and whether it would get an interview${jd ? " for this role" : ""}.
+## Scores
+- Relevance, Evidence strength, Clarity, Concision, Metrics, Seniority fit, Natural voice, ATS readiness: each /5 with a few words why
+## Top 5 fixes (most impactful first)
+## Bullet rewrites
+For the 5 weakest bullets: the original, the problem, and a stronger version that stays within the facts given (put [confirm: …] where a number or outcome is needed but unknown; never invent one).
+## Accuracy and risk flags
+Claims that look inflated, unsupported or inconsistent.
+${jd ? "## Fit gaps\nMust-haves from the JD that the CV doesn't show." : ""}`;
+  $("#reviewOut").hidden = true;
+  const reply = await runTask({title:"Review a CV", user, workingEl: $("#reviewWorking")});
+  if (!reply) return;
+  $("#reviewOut").innerHTML = mdToHtml(tag(reply,"review") || reply); $("#reviewOut").hidden = false; $("#reviewOut").scrollIntoView({behavior:"smooth"});
+});
+
+/* =====================================================================
+   HISTORY
+   ===================================================================== */
+function renderHistory(){
+  const apps = state.applications;
+  $("#histList").innerHTML = apps.length ? apps.map((a,i)=>`<div class="hist-item"><div style="flex:1;min-width:200px"><div class="t">${esc(a.job.role||"Untitled role")} · ${esc(a.job.company||"")}</div><div class="muted">${esc(a.created.slice(0,10))} · ${esc(a.job.location||"")} · ${a.versions.length} version${a.versions.length>1?"s":""}</div></div><button class="btn small" data-open-app="${i}">Open</button><button class="btn ghost small danger" data-del-app="${i}">Delete</button></div>`).join("") : `<p class="muted">No tailored CVs yet.</p>`;
+}
+$("#histList").addEventListener("click", e=>{
+  const o = e.target.closest("[data-open-app]"), d = e.target.closest("[data-del-app]");
+  if (o){ current = state.applications[+o.dataset.openApp]; const j = current.job; $("#jCompany").value=j.company; $("#jRole").value=j.role; $("#jUrl").value=j.url||""; $("#jJd").value=j.jd; $("#jSteer").value=j.steer||""; $("#jChannel").value=j.channel||""; showTab("tailor"); $("#jLocation").value=j.location; showResult(true); }
+  if (d){ if (!confirm("Delete this CV and its versions?")) return; const a = state.applications.splice(+d.dataset.delApp,1)[0]; if (current===a){ current=null; $("#resultArea").hidden=true; } saveNow(); renderHistory(); }
+});
+
+/* =====================================================================
+   SETTINGS & START
+   ===================================================================== */
+function renderSettings(){
+  $$("input[name=mode]").forEach(r=>r.checked = r.value===state.config.mode);
+  $("#apiBox").style.display = state.config.mode==="api" ? "" : "none";
+  renderModePill();
+}
+$$("input[name=mode]").forEach(r=>r.addEventListener("change", ()=>{ state.config.mode = r.value; saveNow(); renderSettings(); }));
+$("#apiKey").addEventListener("input", renderModePill);
+document.addEventListener("change", e=>{ if (e.target.dataset && e.target.dataset.bind==="config.model") renderModePill(); });
+$("#btnTestKey").addEventListener("click", async ()=>{
+  if (!state.config.apiKey.trim()){ toast("Paste your API key first."); return; }
+  const b = $("#btnTestKey"); b.disabled = true; b.textContent = "Testing…";
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {method:"POST", headers:apiHeaders(), body: JSON.stringify(apiBody({max_tokens:64, output_config:{effort:"low"}, messages:[{role:"user",content:"Reply with the single word: ready"}]}))});
+    if (!res.ok) throw await apiError(res);
+    toast("It works. Your API key is connected.");
+  } catch(err){ toast("Test failed: "+err.message); }
+  finally { b.disabled = false; b.textContent = "Test"; }
+});
+$("#btnExport").addEventListener("click", ()=>{
+  const copy = JSON.parse(JSON.stringify(state)); copy.config.apiKey = "";
+  download(`cv-studio-backup-${today()}.json`, JSON.stringify(copy, null, 2), "application/json");
+  toast("Backup downloaded (your API key is not included).");
+});
+$("#fileImport").addEventListener("change", async e=>{
+  const f = e.target.files[0]; if (!f) return; e.target.value = "";
+  try {
+    const data = JSON.parse(await f.text()); if (!data.profile) throw new Error("not a CV Studio backup");
+    if (!confirm("Replace all current data with this backup?")) return;
+    const key = state.config.apiKey; state = mergeDeep(defaults(), data); if (!state.config.apiKey) state.config.apiKey = key;
+    current = null; $("#resultArea").hidden = true; saveNow(); renderAll(); toast("Backup restored.");
+  } catch(err){ toast("Couldn't restore: "+err.message); }
+});
+$("#btnReset").addEventListener("click", ()=>{
+  if (!confirm("Delete your profile, evidence bank, all CVs and settings from this browser? Download a backup first if you might need them.")) return;
+  state = defaults(); current = null; $("#resultArea").hidden = true; saveNow(); renderAll(); toast("All data deleted.");
+});
+
+function renderStart(){
+  const s = profileStatus(), n = state.applications.length;
+  $("#startStatus").innerHTML = `<h2>Your progress</h2><div class="checks" style="margin:8px 0 0">
+    <span class="check ${s.sources?"done":""}">${s.sources?"✓":"○"} CV added</span>
+    <span class="check ${s.bank?"done":""}">${s.bank?"✓":"○"} Evidence bank (${state.profile.bank.length})</span>
+    <span class="check ${s.facts?"done":""}">${s.facts?"✓":"○"} Facts & locations</span>
+    <span class="check ${n?"done":""}">${n?"✓":"○"} Tailored CVs (${n})</span></div>
+    <div class="row" style="margin-top:12px">${s.bank ? `<button class="btn primary" data-go="tailor">Tailor a CV →</button>` : `<button class="btn primary" data-go="profile">Set up my profile →</button>`}</div>`;
+}
+function renderProfile(){ fill($("#tab-profile")); ["locTable","empTable","eduTable"].forEach(renderTable); renderRoleChips(); renderBank(); renderBankQuestions(); renderFeedback(); renderChecks(); }
+function renderAll(){ renderProfile(); fill($("#tab-settings")); renderSettings(); renderLocations(); renderStart(); renderHistory(); }
+renderAll();
+</script>
+</body>
+</html>

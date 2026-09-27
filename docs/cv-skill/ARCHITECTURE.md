@@ -754,8 +754,10 @@ Recommendation: build **A**, keep the skill usable on its own (so **B** comes fr
 - **Data location:** each user's source of truth is `profiles/<user>/` in their JobOS repo, copied into the skill's `candidate/` folder.
 - **First user's settings (Avani):** 1 page; British spelling; no photo or nationality; a phone number and visa line per location. These are stored as *her* settings, not as defaults in the method.
 
+- **Distribution:** a single downloadable HTML file (`app/cv-studio.html`) that runs in Chrome. Data stays in the browser. Two AI modes: copy-paste into the user's own Claude chat (default), or the user's own Anthropic API key.
+- **v1 scope:** CV tool only (profile/onboarding, tailor, review, history). The wider JobOS features come later.
+
 ### Still open
-1. **Distribution:** template repo + skill (recommended), skill only, or hosted web app (§12.4)?
 2. **Privacy of your own profile:** if the JobOS repo will be public or shared, your own profile needs a private home (a private repo, or a private fork).
 3. **Existing `cv-tailor` skill:** switch it off once the new skill passes testing?
 4. **Seed material** for the first real profile (your CV and project log) and the voice questionnaire.
