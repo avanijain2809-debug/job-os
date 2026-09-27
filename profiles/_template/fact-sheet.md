@@ -6,14 +6,13 @@
 - LinkedIn:
 
 ## Location-specific header
-The CV header shows ONE block, chosen by the job's location. No photo, no nationality, no DOB.
+The CV header shows ONE block, chosen by the job's location. Which header fields appear
+(photo, nationality, DOB, visa line) is set per region in `settings.yaml`.
 
 | Location | Phone number | Visa / work-authorisation line (exact wording) |
 |---|---|---|
-| Hong Kong | | |
-| UAE | | |
-| London / UK | | |
-| Remote / other | | |
+| <location 1> | | |
+| <location 2> | | |
 
 ## Employment (exact titles and dates)
 | Employer | Exact title | Start (Mon YYYY) | End | Location |
@@ -26,8 +25,4 @@ The CV header shows ONE block, chosen by the job's location. No photo, no nation
 | | | | |
 
 ## Certifications, languages
-- 
-
-## Conventions
-- Spelling: British English
-- Length: 1 page
+-

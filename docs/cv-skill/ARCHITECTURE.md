@@ -1,4 +1,4 @@
-# CV Skill — Architecture Proposal (v0.1, for review)
+# CV Skill — Architecture Proposal (v0.2, for review)
 
 > Status: **design only**. No SKILL.md has been written yet. This document proposes the architecture, explains why each component exists, and lists the decisions needed before the build.
 
@@ -620,7 +620,7 @@ A fixed contract lets JobOS change (a new UI, another model, a new renderer) wit
 
 Your evidence bank is **shared infrastructure**. Cover letters, interview prep and outreach need the same facts. There are two options:
 
-- **Option A (recommended):** the source of truth lives in the JobOS repo (`profile/`: fact sheet, evidence bank, voice, feedback log), versioned in git. The skill references those files. For standalone use (claude.ai, outside JobOS), a small sync step copies them into the skill's `candidate/` folder.
+- **Option A (recommended):** the source of truth lives in the JobOS repo (`profiles/<user>/`: fact sheet, evidence bank, voice, feedback log), versioned in git. The skill references those files. For standalone use (claude.ai, outside JobOS), a small sync step copies them into the skill's `candidate/` folder.
 - **Option B:** the data lives inside the skill folder only. Simpler, but other JobOS modules then have to read from inside the skill, or duplicate it.
 
 ---
@@ -632,7 +632,7 @@ Your evidence bank is **shared infrastructure**. Cover letters, interview prep a
 ```
 cv-skill/
 ├── SKILL.md                      # ≤ ~300 lines: purpose, modes, non-negotiables, workflow, pointers
-├── candidate/                    # PERSONAL (synced from JobOS profile/ under Option A)
+├── candidate/                    # PERSONAL, per user (synced from JobOS profiles/<user>/; empty in the shared package)
 │   ├── profile.md                # fact sheet + core identity + signature strengths + hard boundaries
 │   ├── evidence-bank.yaml        # claim units (§3 schema)
 │   ├── voice-and-style.md        # preferred/disliked language, spelling, tone
@@ -640,7 +640,10 @@ cv-skill/
 │   └── feedback-log.md           # captured lessons, pending promotion
 ├── method/                       # GENERIC (reusable for anyone)
 │   ├── decision-engine.md        # steps 0–11 in detail, requirement classes, evidence tiers, gap triage
-│   ├── role-lenses.md            # one section per archetype: what readers screen for, signals, AI prominence,
+│   ├── role-lenses/              # library: one file per role family (users pick theirs)
+│   ├── regions/                  # library: one file per region's CV conventions
+│   ├── onboarding.md             # §12.2 ingest → extract → interview → calibrate → baseline
+│   ├── role-lenses.md            # (index of the library) one section per archetype: what readers screen for, signals, AI prominence,
 │   │                             #   section order, vocabulary, common pitfalls
 │   ├── bullet-rules.md           # §5.1–5.4 + summary rules
 │   ├── ai-positioning.md         # §5.6
@@ -653,8 +656,8 @@ cv-skill/
 │   ├── cv-template.md            # canonical Markdown CV skeleton (+ variants)
 │   └── output-report.md          # positioning brief / decisions / gaps / questions / cv_meta shape
 └── examples/
-    ├── bullets-before-after.md   # weak→strong pairs using YOUR real evidence
-    └── golden-cvs/               # 1–2 approved CVs as quality anchors (added after first real runs)
+    ├── bullets-before-after.md   # weak→strong pairs for a FICTIONAL persona
+    └── example-profile/          # complete fictional profile, used for demos and evals
 ```
 
 **Why this split:** method files rarely change, and changing them improves every CV. Candidate files change often and never require touching the method. Examples are the strongest style signal Claude gets, so they're kept as real, approved outputs rather than invented ones.
@@ -674,10 +677,10 @@ description: <when to trigger: JD shared, "tailor/review/improve my CV", "add th
 ## 2. Non-negotiables            — top integrity rules, placed early so they carry the most weight:
                                    trace every claim · never inflate ownership · never invent
                                    metrics/skills · confidentiality · ask, don't guess
-## 3. Modes                      — Tailor / Review / Refine / Bank: triggers + outputs
+## 3. Modes                      — Onboarding / Tailor / Review / Refine / Bank: triggers + outputs
 ## 4. Inputs                     — required vs optional; missing-input protocol; files to load
-## 5. Who the candidate is       — 5-line core identity + signature strengths
-                                   (full detail → candidate/profile.md)
+## 5. Loading the candidate      — read settings.yaml + profile; never assume personal defaults
+                                   (no personal data in SKILL.md itself)
 ## 6. Workflow (Tailor mode)     — the 12-step decision engine, one short paragraph per step,
                                    each pointing to its method file
 ## 7. Writing standard (summary) — the 8–10 rules that matter most + pointers to
@@ -686,7 +689,7 @@ description: <when to trigger: JD shared, "tailor/review/improve my CV", "add th
 ## 9. Quality gates              — list hard gates H1–H10; "fix before output" rule
 ## 10. Output contract           — what's shown, in what order; cv_meta block;
                                    what stays internal; "show working" switch
-## 11. Other modes               — short procedure for Review, Refine, Bank
+## 11. Other modes               — short procedure for Onboarding, Review, Refine, Bank
 ## 12. Learning loop             — how edits become feedback-log entries → promotions
 ## 13. Reference index           — table: file → when to load it
 ```
@@ -695,29 +698,74 @@ description: <when to trigger: JD shared, "tailor/review/improve my CV", "add th
 
 ---
 
-## 12. Decisions
+## 12. Multi-user design (added in v0.2)
+
+**Goal:** anyone can use the system. The first user (Avani) is one profile, not the design target.
+
+The layered design already separates the generic *method* from personal *candidate data*. Going multi-user means finishing that separation and adding onboarding.
+
+### 12.1 What changes
+
+| Area | v0.1 (one user) | v0.2 (anyone) |
+|---|---|---|
+| Candidate data | `profile/` | `profiles/<user>/`, copied from `profiles/_template/` |
+| Personal defaults (length, spelling, regions, header fields) | Written into the rules | `settings.yaml` per user; the method reads settings and contains no one's defaults |
+| Seniority | Assumes early-career | `seniority_band` (student → executive) drives length, summary style, verb ceilings and how much leadership evidence is expected |
+| Role types | 7 hard-coded families | A **role-lens library** shipped with the skill. Users pick theirs in `settings.yaml`; new lenses can be added as files. |
+| Regions | HK / UAE / UK | A **regional-conventions library** (one section per region). Users list the regions they apply to. |
+| Banned / preferred language | One person's list | Default anti-AI list in the method **plus** per-user additions and exceptions in `voice-and-style.md` |
+| AI positioning | Assumes an AI builder | `ai_experience_level` caps what can be claimed (none / uses / builds / advises) |
+| Examples | The user's real bullets | Method examples use a **fictional persona**; real bullets stay in each user's own profile |
+| First use | Manual setup | New **Onboarding mode** (below) |
+
+### 12.2 New mode: Onboarding
+
+This is the most important feature for a new user, because the quality of every CV depends on the evidence bank.
+
+1. **Ingest:** read everything in `sources/` (CVs, project notes, LinkedIn export, performance reviews).
+2. **Extract:** draft the fact sheet and one evidence entry per project or achievement.
+3. **Interview:** for each entry, ask only what's missing: what the user personally owned, whether each number is exact or approximate, the outcome, and how the client may be named. Questions go in batches of 5–8, so it isn't an interrogation.
+4. **Calibrate voice:** ask for 2–3 bullets the user likes and a few words they dislike; draft `voice-and-style.md`.
+5. **Settings:** infer the seniority band and regions from the CV; confirm target role families.
+6. **Baseline:** generate a general-purpose master CV from the bank for the user to review. Their edits seed `feedback-log.md`.
+
+Onboarding can be resumed, so a user can stop midway and continue later.
+
+### 12.3 Privacy
+
+- Profiles hold personal data (contacts, visa status, client work). The public/shared repo ships **only** the method, the templates and a fictional example profile.
+- Each user keeps their own profile in a **private** repo, a private fork, or outside git.
+- The method never writes one user's data into shared files (feedback promotions go into that user's `voice-and-style.md`, never the shared method).
+
+### 12.4 Distribution (decision needed)
+
+| Option | What users do | Effort | Fit with "lightweight, portable" |
+|---|---|---|---|
+| **A. Template repo + Claude skill** (recommended first) | Fork or copy the repo, drop in their CV, run Onboarding in Claude | Low | Strong |
+| **B. Installable skill only** | Install the skill; keep their profile in a folder they upload each time | Low | Strong, but no JobOS workflow |
+| **C. Hosted web app** | Sign up, upload their CV, use a UI | High: accounts, storage, security, API costs | Weak for now |
+
+Recommendation: build **A**, keep the skill usable on its own (so **B** comes free), and treat **C** as a later product decision once the method is proven.
+
+## 13. Decisions
 
 ### Confirmed (2026-09-27)
-- **Data location:** Option A. The source of truth is `profile/` in the JobOS repo, copied into the skill's `candidate/` folder.
-- **Length:** 1 page for every archetype.
-- **Regional header:** no photo, no nationality. Each location gets its own **phone number** and **visa / work-authorisation line**, both stored in `profile/fact-sheet.md`.
-- **Spelling:** British English.
+- **Audience:** the system is for anyone, not one person (§12).
+- **Data location:** each user's source of truth is `profiles/<user>/` in their JobOS repo, copied into the skill's `candidate/` folder.
+- **First user's settings (Avani):** 1 page; British spelling; no photo or nationality; a phone number and visa line per location. These are stored as *her* settings, not as defaults in the method.
 
 ### Still open
+1. **Distribution:** template repo + skill (recommended), skill only, or hosted web app (§12.4)?
+2. **Privacy of your own profile:** if the JobOS repo will be public or shared, your own profile needs a private home (a private repo, or a private fork).
+3. **Existing `cv-tailor` skill:** switch it off once the new skill passes testing?
+4. **Seed material** for the first real profile (your CV and project log) and the voice questionnaire.
 
-1. **Data location:** Option A (JobOS `profile/` as source of truth, synced into the skill) or Option B (inside the skill only)?
-2. **Seed material:** can you provide the Master CV and the "Master Work Experience Log" workbook? The first build step is converting them into the evidence bank, with a short Q&A from me to fill in `my_role`, `ownership_level` and metric provenance.
-3. **Page length:** 1 page as the default for every archetype, or 2 pages allowed for some (e.g. AI roles with a projects section)?
-4. **Regional conventions:** confirm your choices on nationality, visa line and photo for UAE; spelling (British by default?).
-5. **Existing `cv-tailor` skill:** replace it once the new one is tested?
-6. **Voice seed:** 5–10 words or phrases you dislike, and 2–3 bullets you've written that you think are *right*. These are the best calibration signal.
-7. **Archetype priority:** rank the target families (Consulting, CDD, PE/VC, S&O, CoS, Corp Strategy, AI) so the role lenses get the right depth.
+## 14. Proposed build sequence (after approval)
 
-## 13. Proposed build sequence (after approval)
-
-1. Build `candidate/` from your seed material (evidence bank first, then profile and voice).
-2. Write the `method/` files.
-3. Write SKILL.md (the thin orchestrator).
-4. **Evaluate** against 5–6 real JDs across archetypes (e.g. MBB, CDD boutique, PE portfolio ops, CoS at a startup, AI implementation). Check the hard gates automatically and the soft scores by your review.
-5. Iterate on your edits, promote feedback, and add golden examples.
-6. Wire into JobOS through the interface contract.
+1. Write the generic `method/` files, including the role-lens and regional libraries and Onboarding.
+2. Write SKILL.md (the thin orchestrator; no personal data).
+3. Build a **fictional example profile** for demos and evals.
+4. **Onboard the first real user** (Avani) through Onboarding mode. This doubles as the test of onboarding.
+5. **Evaluate** against 5–6 real JDs across role families, for both the fictional and the real profile. Hard gates are checked automatically; soft scores by human review.
+6. Iterate, then onboard 1–2 more people with different backgrounds (e.g. mid-career, a different industry) to prove the method generalises.
+7. Wire into JobOS through the interface contract.

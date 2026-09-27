@@ -1,0 +1,30 @@
+# Per-user settings. Everything the method treats as a user choice lives here,
+# Example values shown; replace with your own during onboarding.
+# so the skill itself contains no one's personal defaults.
+
+seniority_band: early        # student | early (0-3y) | mid (3-8y) | senior (8-15y) | executive
+page_length: 1               # 1 | 2  (default derived from seniority_band if blank)
+spelling: british            # british | american
+
+target_role_families:        # pick from method/role-lenses.md, in priority order (optional)
+  - strategy-consulting
+  - commercial-due-diligence
+  # - pe-value-creation
+  # - strategy-and-operations
+  # - chief-of-staff
+  # - corporate-strategy
+  # - ai-implementation
+
+regions:                     # one entry per location you apply to
+  - name: Hong Kong
+    photo: false
+    nationality: false
+    date_of_birth: false
+    visa_line: true          # text comes from fact-sheet.md
+  # - name: UAE
+  #   photo: false
+  #   nationality: false
+  #   date_of_birth: false
+  #   visa_line: true
+
+ai_experience_level: builds  # none | uses | builds | advises  (caps how AI can be claimed)
